@@ -56,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
             """ Login, 
  HomePage, 
  Classification Pages(Pest,Crop,Weed), 
- IoT controling Pages.""",
+ IoT controling Pages. """,
             ),
            
           ],
