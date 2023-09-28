@@ -129,7 +129,7 @@ class WelcomePage extends StatelessWidget {
                           ),
                         );
                       },
-                      child: Text('Get Started',
+                      child: Text('Get Started ',
                           style: GoogleFonts.lobster(
                             textStyle: TextStyle(
                               fontSize: 40,
