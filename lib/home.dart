@@ -1,25 +1,23 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smart_farming/crop_prediction/crop_predictHome.dart';
+import 'package:smart_farming/iot_control.dart';
+import 'package:smart_farming/login.dart';
 import 'cost_estimation.dart';
 import 'pest_identification.dart';
 import 'weed_identification.dart';
-import 'crop_prediction.dart';
+import 'crop_prediction/crop_prediction.dart';
 import 'dart:math';
 
-// void main() {
-//   runApp(MyApp());
-// }
 
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: HomePage(),
-//     );
-//   }
-// }
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
 
-class HomePage extends StatelessWidget {
+class _HomePageState extends State<HomePage> {
   final List<String> imagePaths = [
     'assets/images/crop.png',
     'assets/images/weed.png',
@@ -39,6 +37,45 @@ class HomePage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text('Home Page'),
+          actions: [
+              PopupMenuButton<String>(
+            child: Icon(Icons.more_vert),
+            onSelected: (String value) async {
+              switch (value) {
+                case 'logout':
+                  {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    prefs.setBool('isLoggedIn', false);
+                    // await FirebaseAuth.instance.signOut();
+                    // Navigator.of(context)
+                    //     .push(MaterialPageRoute(builder: (ctx) {
+                    //   return LoginScreen();
+                    // }));
+                    FirebaseAuth.instance.signOut().then((value) {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: ((ctx) {
+                        return LoginPage();
+                      })));
+                    });
+                  }
+
+                  break;
+                default:
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              PopupMenuItem<String>(
+                value: 'points',
+                child: Text('Points'),
+              ),
+              PopupMenuItem<String>(
+                value: 'logout',
+                child: Text('Logout'),
+              ),
+            ],
+          ),SizedBox(width: 10,)
+          ],
         ),
         body: Container(
           width: double.infinity,
@@ -73,7 +110,7 @@ class HomePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CropPredictionPage(),
+                          builder: (context) => CropPredictionHome(),
                         ),
                       );
                     }),
@@ -158,10 +195,36 @@ class HomePage extends StatelessWidget {
                         ),
                       );
                     }),
+              ),SizedBox(height: 10),
+              Container(
+                padding: EdgeInsets.only(left: 10, right: 10),
+                height: 60,
+                width: 300,
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                    child: Text(
+                      'IoT Control',
+                      style: GoogleFonts.getFont('Didact Gothic',
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 24),
+                    ),
+                    onPressed: () async {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => IoTControlPage(),
+                        ),
+                      );
+                    }),
               ),
             ],
           ),
-        )
+        ),
         // Stack(
         //   children: [
         //     // Background Image with Black Overlay

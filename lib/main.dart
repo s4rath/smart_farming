@@ -1,15 +1,29 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smart_farming/home.dart';
 import 'registration.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Initialize Firebase
-  runApp(MyApp());
+  await Firebase.initializeApp(); 
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+  runApp(MyApp(isLoggedIn: isLoggedIn,));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  final bool isLoggedIn;
+  const MyApp({super.key, required this.isLoggedIn});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -17,7 +31,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: WelcomePage(),
+      home: widget.isLoggedIn ? HomePage() : WelcomePage()
+      ,
     );
   }
 }
@@ -31,7 +46,7 @@ class WelcomePage extends StatelessWidget {
       decoration: BoxDecoration(
         image: DecorationImage(
           image: AssetImage(
-              'assets/images/photo.jpg'), // Replace with your image path
+              'assets/images/photo.jpg'), 
           fit: BoxFit.cover,
         ),
       ),
@@ -56,7 +71,7 @@ class WelcomePage extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(
-                left: 0, bottom: 20), // Adjust left padding
+                left: 0, bottom: 20),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
@@ -64,11 +79,11 @@ class WelcomePage extends StatelessWidget {
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(
-                      20), // Adjust the value for desired curvature
+                      20), 
                 ),
               ),
               onPressed: () {
-                // Navigate to the RegistrationPage when the button is clicked
+                
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => RegistrationPage(),

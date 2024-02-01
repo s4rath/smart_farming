@@ -38,6 +38,11 @@ dependencies:
   firebase_auth: ^4.9.0
   google_fonts: ^5.1.0
   http: ^1.2.0
+  shared_preferences: ^2.2.2
+  image_picker: 
+  tflite_flutter: ^0.10.4
+  flutter_tflite: ^1.0.1
+  geolocator: ^10.1.0
 
 dev_dependencies:
   flutter_test:
