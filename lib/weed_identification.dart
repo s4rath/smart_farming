@@ -107,7 +107,7 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
               ),
               Container(
                   child: Text(
-                'Pest Detector',
+                'Weed Detector',
                 style: GoogleFonts.getFont('Didact Gothic',
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
