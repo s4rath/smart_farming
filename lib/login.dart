@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home.dart';
 
@@ -61,6 +62,8 @@ class _LoginPageState extends State<LoginPage> {
       );
       // Login successful, navigate to the home page or any other desired page.
       // Replace HomePage with the actual home page class.
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setBool('isLoggedIn', true);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomePage()),

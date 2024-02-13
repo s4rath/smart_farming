@@ -88,7 +88,7 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
 
    loadmodel() async {
     var res = await Tflite.loadModel(
-      model: 'assets/pest_model/unquantized.tflite',
+      model: 'assets/pest_model/pests-98.44.tflite',
       labels: 'assets/pest_model/labels.txt',
     );
     print("Result after loading the model: $res");

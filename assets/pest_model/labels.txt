@@ -1,9 +1,9 @@
-0 aphids
-1 armyworm
-2 beetle
-3 bollworm
-4 grasshopper
-5 mites
-6 mosquito
-7 sawfly
-8 stem_borer
+aphids
+armyworm
+beetle
+bollworm
+grasshopper
+mites
+mosquito
+sawfly
+stem_borer
