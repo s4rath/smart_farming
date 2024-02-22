@@ -1,22 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_tflite/flutter_tflite.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
-// void main() {
-//   runApp(MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: PestIdentificationPage(),
-//     );
-//   }
-// }
 
 class PestIdentificationPage extends StatefulWidget {
   const PestIdentificationPage({super.key});
@@ -31,48 +21,68 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
   late File _image;
   List _output = [];
   final imagepicker = ImagePicker();
+  String predictedClass="";
     @override
   void initState() {
     super.initState();
     loading = true;
-    loadmodel().then((value) {
-      print(value);
-      print('on the detect page');
-      setState(() {});
-    });
+    // loadmodel().then((value) {
+    //   print(value);
+    //   print('on the detect page');
+    //   setState(() {});
+    // });
    
 
    
   }
 
-  detectimage(File image) async {
-    print(image.path);
-    var prediction = await Tflite.runModelOnImage(
-      path: image.path,
-      numResults: 12,
-      // threshold: 0.45,
-    );
-    print("predictions are $prediction");
-    setState(() {
-      _output = prediction!;
-      print(_output[0]['confidence']);
-      loading = false;
-    });
-    
-  }
+
    @override
   void dispose() {
     Tflite.close();
     super.dispose();
   }
+
+  Future<String> predictImage(File imageFile) async {
+
+    var request = http.MultipartRequest('POST', Uri.parse("http://johnhona1.pythonanywhere.com/pest"));
+    request.headers['content-type'] = 'multipart/form-data';
+    request.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
+
+    var streamedResponse = await request.send();
+    var response = await http.Response.fromStream(streamedResponse);
+    print(response.statusCode);
+    print(response.body);
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      print(jsonResponse);
+      String predictedClass = jsonResponse['predicted_class'];
+      return predictedClass;
+    } else {
+      return "null";
+    }
+  }
+
+
     pickimage_camera() async {
     var image = await imagepicker.pickImage(source: ImageSource.camera);
     if (image == null) {
       return null;
     } else {
+       loading=false;
+      setState(() {
+        
+      });
       _image = File(image.path);
+     
     }
-    detectimage(_image);
+    
+    print("here");
+    predictedClass =await predictImage(_image);
+    print('Predicted class: $predictedClass');
+     setState(() {
+      
+    });
   }
 
    pickimage_gallery() async {
@@ -80,19 +90,22 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
     if (image == null) {
       return null;
     } else {
+      loading=false;
+      setState(() {
+        
+      });
       _image = File(image.path);
+      
     }
     print("here");
-    detectimage(_image);
+   
+    predictedClass =await predictImage(_image);
+    print('Predicted class: $predictedClass');
+     setState(() {
+      
+    });
   }
 
-   loadmodel() async {
-    var res = await Tflite.loadModel(
-      model: 'assets/pest_model/pests-98.44.tflite',
-      labels: 'assets/pest_model/labels.txt',
-    );
-    print("Result after loading the model: $res");
-  }
   @override
   Widget build(BuildContext context) {
      var h = MediaQuery.of(context).size.height;
@@ -203,12 +216,12 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
                         SizedBox(
                           height: 10,
                         ),
-                           if (_output.isNotEmpty && _output[0]['confidence']>0.6)
+                           if (predictedClass !="" )
                            Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'Classified as : ${_output[0]['label'].toString()}',
+                                    'Classified as : $predictedClass',
                                     style: GoogleFonts.getFont('Didact Gothic',
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
@@ -216,9 +229,9 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
                                   ),
                                 ],
                               )
-                              else Text(
-                                _output[0]["label"]!=null?
-                                'Image cannot be detected likely to be ${_output[0]["label"]}':"Image cannot be detected",
+                              else Text( "",
+                                // _output[0]["label"]!=null?
+                                // 'Image cannot be detected likely to be ${_output[0]["label"]}':"Image cannot be detected",
                                 style: GoogleFonts.getFont('Didact Gothic',
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold,
@@ -247,7 +260,7 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
                         //             fontSize: 22),
                         //       ),
 
-                                     if (_output.isNotEmpty && _output[0]['confidence']>0.6)
+                                     if (_output.isNotEmpty )
                                      Column(
                                 children: [
                                   Padding(

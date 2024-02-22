@@ -43,7 +43,7 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
     if (!formKey.currentState!.validate()) {
       return;
     }
-    final apiUrl = 'http://johnhonai.pythonanywhere.com/predict';
+    final apiUrl = 'http://johnhona1.pythonanywhere.com/predict';
     print(
         "${_nController.text},${_pController.text},${_kController.text},${_temperatureController.text},${_humidityController.text},${_phController.text},${_rainfallController.text}");
     final response = await http.post(
