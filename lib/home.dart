@@ -6,8 +6,8 @@ import 'package:smart_farming/crop_prediction/crop_predictHome.dart';
 import 'package:smart_farming/iot_control.dart';
 import 'package:smart_farming/login.dart';
 import 'cost_estimation.dart';
-import 'pest_identification.dart';
-import 'weed_identification.dart';
+import 'pest_classification/pest_identification.dart';
+import 'weed_classification/weed_identification.dart';
 import 'crop_prediction/crop_prediction.dart';
 import 'dart:math';
 
