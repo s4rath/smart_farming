@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_tflite/flutter_tflite.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -24,6 +23,7 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
   List _output = [];
   final imagepicker = ImagePicker();
   int predictedClass=-1;
+  double confidence=0.0;
     @override
   void initState() {
     super.initState();
@@ -39,11 +39,7 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
   }
 
 
-   @override
-  void dispose() {
-    Tflite.close();
-    super.dispose();
-  }
+
 
   Future<int> predictImage(File imageFile) async {
 
@@ -59,6 +55,8 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
       var jsonResponse = json.decode(response.body);
       print(jsonResponse);
       int predictedClass = jsonResponse['predicted_class'];
+      confidence=jsonResponse['confidence'];
+      print(confidence.toStringAsFixed(3));
       return predictedClass;
     } else {
       return -1;
@@ -218,12 +216,12 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
                         SizedBox(
                           height: 10,
                         ),
-                           if (predictedClass !=-1 )
+                           if (predictedClass !=-1 && confidence>0.68)
                            Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'Classified as : ${details[predictedClass].title}',
+                                    'Classified as : ${details[predictedClass].title} [${confidence.toStringAsFixed(4)}]',
                                     style: GoogleFonts.getFont('Didact Gothic',
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
@@ -231,7 +229,7 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
                                   ),
                                 ],
                               )
-                              else Text( "",
+                              else Text( confidence==0.0 ?"":"Image cannot be detected",
                                 // _output[0]["label"]!=null?
                                 // 'Image cannot be detected likely to be ${_output[0]["label"]}':"Image cannot be detected",
                                 style: GoogleFonts.getFont('Didact Gothic',
@@ -243,7 +241,7 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
 
                        
 
-                                     if (predictedClass !=-1  )
+                                     if (predictedClass !=-1 && confidence>0.68 )
                                      Column(
                                 children: [
                                   Padding(

@@ -122,7 +122,7 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                               }
                             },
                             decoration: InputDecoration(
-                              labelText: 'N', hintText: '',
+                              labelText: 'Nitrogen', hintText: '',
                               hintStyle: TextStyle(color: Colors.grey),
                               // prefixIcon: Icon(
                               //   Icons.phone,
@@ -161,7 +161,7 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                               }
                             },
                             decoration: InputDecoration(
-                              labelText: 'P', hintText: '',
+                              labelText: 'Phosphorous', hintText: '',
                               hintStyle: TextStyle(color: Colors.grey),
                               // prefixIcon: Icon(
                               //   Icons.phone,
@@ -200,7 +200,7 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                               }
                             },
                             decoration: InputDecoration(
-                              labelText: 'k', hintText: '',
+                              labelText: 'Potassium', hintText: '',
                               hintStyle: TextStyle(color: Colors.grey),
                               // prefixIcon: Icon(
                               //   Icons.phone,

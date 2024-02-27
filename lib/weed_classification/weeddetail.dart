@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 List<Detail> details = [
   Detail(
     photo: Image.network(
-        "https://www.conserve-energy-future.com/wp-content/uploads/2016/02/battery-recycling.jpg"),
+        "https://agricology.co.uk/wp-content/uploads/2020/02/DSC02400.JPG"),
     title: 'Black-grass',
     about:
         'Black-grass is an annual grass weed that can be found in many cereal crops, especially wheat and barley fields. It competes with crops for nutrients, water, and sunlight, reducing yields and quality. Black-grass is difficult to control and can quickly develop resistance to herbicides.',
@@ -15,7 +15,7 @@ List<Detail> details = [
   ),
   Detail(
     photo: Image.network(
-        "https://www.google.com/url?sa=i&url=https%3A%2F%2Fcelitron.com%2Fen%2Fbiomedical-waste-management-disposal-methods&psig=AOvVaw3XS9sOk-GeKnhTknRnMe9d&ust=1649673997323000&source=images&cd=vfe&ved=0CAoQjRxqFwoTCLCEmd6oifcCFQAAAAAdAAAAABAD"),
+        "https://barmac.com.au/wp-content/uploads/sites/3/2016/01/Charlock.jpg"),
     title: 'Charlock',
     about:
         'Charlock, also known as wild mustard, is a common weed found in arable crops, gardens, and waste areas. It can compete with crops for nutrients and water, reducing yields and quality. Charlock is difficult to control due to its rapid growth and prolific seed production.',
@@ -27,7 +27,7 @@ List<Detail> details = [
   ),
   Detail(
     photo: Image.network(
-        "https://www.pdsigns.ie/contentFiles/productImages/Large/RWSW3.jpg"),
+        "https://i.pinimg.com/originals/83/4a/ea/834aeaa439d55d5685d4ac8d621f451b.jpg"),
     title: 'Cleavers',
     about:
         'Cleavers, also known as bedstraw or goosegrass, is a weed commonly found in agricultural fields, gardens, and waste areas. It can compete with crops for nutrients, water, and sunlight, reducing yields and quality. Cleavers are known for their sticky stems and leaves, which can cling to clothing and machinery.',
@@ -39,7 +39,7 @@ List<Detail> details = [
   ),
   Detail(
     photo: Image.network(
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZtaxt_hNYcRJbl9Vd4if7bmy3jwy8eDnWD96pEkMEy8ja64IpxdPtUul625T3eltkR7g&usqp=CAU"),
+        "https://plantura.garden/uk/wp-content/uploads/sites/2/2021/11/chickweed-white-flowers.jpg"),
     title: 'Common chickweed',
     about:
         'Common chickweed is a winter annual weed that can be found in many agricultural fields, gardens, and lawns. It competes with crops for nutrients, water, and sunlight, reducing yields and quality. Common chickweed is known for its prostrate growth habit and small white flowers.',
@@ -51,7 +51,7 @@ List<Detail> details = [
   ),
   Detail(
     photo: Image.network(
-        "https://in.apparelresources.com/wp-content/uploads/sites/3/2021/08/unnamed.jpg"),
+        "https://cdn.wikifarmer.com/wp-content/uploads/2022/06/Weed-Management-in-Wheat-Farming.jpg"),
     title: 'Common wheat',
     about:
         'Common wheat, also known as bread wheat or Triticum aestivum, is a staple cereal crop grown worldwide for its edible grains. It is susceptible to various weeds that can compete for nutrients, water, and sunlight, reducing yields and quality. Common weeds in wheat fields include grasses, broadleaves, and sedges.',
@@ -63,7 +63,7 @@ List<Detail> details = [
   ),
   Detail(
     photo: Image.network(
-        "https://thumbs.dreamstime.com/b/bunch-empty-green-glass-bottles-collected-recycling-sale-waste-management-concept-180815991.jpg"),
+        "https://1.bp.blogspot.com/-NGx9_SnuAbs/XipDiYSC5PI/AAAAAAAAEIc/gKmZrJYrz4svrcY3haAvQscsMFdvG8mwwCLcBGAsYHQ/s1600/20200110_100839.jpg"),
     title: 'Fat Hen',
     about:
         'Fat hen, also known as lamb\'s quarters or Chenopodium album, is a common weed found in agricultural fields, gardens, and waste areas. It competes with crops for nutrients, water, and sunlight, reducing yields and quality. Fat hen is known for its white-mealy appearance and prolific seed production.',
@@ -75,7 +75,7 @@ List<Detail> details = [
   ),
   Detail(
     photo: Image.network(
-        "https://www.recyclingdepotadelaide.com.au/wp-content/uploads/2015/04/scrap-metal-recycling-process.jpg"),
+        "https://images.ctfassets.net/l2hapltrg3cz/3KXq1jtn5hkZ8XQaldSDdB/198497c177d8de2eb457cc9004907f19/loose_silky-bent_fh.jpg?fm=webp&w=1920&q=85"),
     title: 'Loose Silky-bent',
     about:
         'Loose silky-bent, also known as Alopecurus myosuroides, is a grass weed commonly found in wheat and barley fields. It competes with crops for nutrients, water, and sunlight, reducing yields and quality. Loose silky-bent is known for its tufted appearance and ability to produce large numbers of seeds.',
@@ -87,7 +87,7 @@ List<Detail> details = [
   ),
   Detail(
     photo: Image.network(
-        "https://img2.exportersindia.com/product_images/bc-full/dir_180/5379364/paper-waste-1512642370-3503613.jpeg"),
+        "https://agritech.tnau.ac.in/agriculture/images/maize/Parthenium%20hysterophorus.jpg"),
     title: 'Maize',
     about:
         'Maize, also known as corn or Zea mays, is a staple cereal crop grown worldwide for its edible grains. It is susceptible to various weeds that can compete for nutrients, water, and sunlight, reducing yields and quality. Common weeds in maize fields include grasses, broadleaves, and sedges.',
@@ -99,7 +99,7 @@ List<Detail> details = [
   ),
   Detail(
     photo: Image.network(
-        "https://marketresearch.biz/wp-content/uploads/2019/01/plastic-waste-management-market.jpg"),
+        "https://c8.alamy.com/comp/ADPT9K/scentless-mayweed-tripleurospermum-inodorum-matricaria-perforata-cornfield-ADPT9K.jpg"),
     title: 'Scentless Mayweed',
     about:
         'Scentless mayweed, also known as Tripleurospermum inodorum, is a common weed found in agricultural fields, gardens, and waste areas. It competes with crops for nutrients, water, and sunlight, reducing yields and quality. Scentless mayweed is known for its small white flowers and strong odor when crushed.',
@@ -111,7 +111,7 @@ List<Detail> details = [
   ),
   Detail(
     photo: Image.network(
-        "https://marketresearch.biz/wp-content/uploads/2019/01/plastic-waste-management-market.jpg"),
+        "https://cdn.mos.cms.futurecdn.net/cBDj5VPspHVRbg2gYX9Ws9.jpg"),
     title: 'Shepherd\'s Purse',
     about:
         'Shepherd\'s purse, also known as Capsella bursa-pastoris, is a common weed found in agricultural fields, gardens, and waste areas. It competes with crops for nutrients, water, and sunlight, reducing yields and quality. Shepherd\'s purse is known for its distinctive heart-shaped seed pods and rapid growth habit.',
@@ -123,7 +123,7 @@ List<Detail> details = [
   ),
   Detail(
     photo: Image.network(
-        "https://marketresearch.biz/wp-content/uploads/2019/01/plastic-waste-management-market.jpg"),
+        "https://c8.alamy.com/comp/D09DF3/small-flowered-cranesbill-geranium-pusillum-in-flower-berry-head-D09DF3.jpg"),
     title: 'Small-flowered Cranesbill',
     about:
         'Small-flowered cranesbill, also known as Geranium pusillum, is a common weed found in agricultural fields, gardens, and waste areas. It competes with crops for nutrients, water, and sunlight, reducing yields and quality. Small-flowered cranesbill is known for its small pink or purple flowers and deeply lobed leaves.',
@@ -135,7 +135,7 @@ List<Detail> details = [
   ),
   Detail(
     photo: Image.network(
-        "https://marketresearch.biz/wp-content/uploads/2019/01/plastic-waste-management-market.jpg"),
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRy76prxW-O5GDZLmuV0WId_6MfaDVEEbYWUw&usqp=CAU"),
     title: 'Sugar beet',
     about:
         'Sugar beet, also known as Beta vulgaris subsp. vulgaris, is a root crop grown for sugar production. It is susceptible to various weeds that can compete for nutrients, water, and sunlight, reducing yields and quality. Common weeds in sugar beet fields include grasses, broadleaves, and sedges.',

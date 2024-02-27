@@ -40,8 +40,6 @@ dependencies:
   http: ^1.2.0
   shared_preferences: ^2.2.2
   image_picker: 
-  tflite_flutter: ^0.10.4
-  flutter_tflite: ^1.0.1
   geolocator: ^10.1.0
   firebase_core: ^2.25.4
   firebase_database: ^10.4.5
