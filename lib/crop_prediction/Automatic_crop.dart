@@ -11,7 +11,8 @@ class CropPredictionAuto extends StatefulWidget {
   State<CropPredictionAuto> createState() => _CropPredictionAutoState();
 }
 
-class _CropPredictionAutoState extends State<CropPredictionAuto> with WidgetsBindingObserver{
+class _CropPredictionAutoState extends State<CropPredictionAuto>
+    with WidgetsBindingObserver {
   Position? _currentPosition;
   double? latitude;
   double? longitude;
@@ -31,13 +32,14 @@ class _CropPredictionAutoState extends State<CropPredictionAuto> with WidgetsBin
     WidgetsBinding.instance.addObserver(this);
     _checkLocationPermission();
   }
-  
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
-   @override
+
+  @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
@@ -61,9 +63,11 @@ class _CropPredictionAutoState extends State<CropPredictionAuto> with WidgetsBin
         final String temp = currentData['temp_c'].toString();
         final String hum = currentData['humidity'].toString();
         print("$temp $hum");
-        temperature = temp;
-        humidity = hum;
-        setState(() {});
+
+        setState(() {
+          temperature = temp;
+          humidity = hum;
+        });
         // return {'temperature': temperature, 'humidity': humidity};
       } else {
         throw Exception(
@@ -78,6 +82,7 @@ class _CropPredictionAutoState extends State<CropPredictionAuto> with WidgetsBin
     if (!formKey.currentState!.validate()) {
       return;
     }
+    print("here");
     if (temperature.isEmpty || humidity.isEmpty) {
       print('Temperature and humidity cannot be empty.');
       return;
@@ -152,8 +157,11 @@ class _CropPredictionAutoState extends State<CropPredictionAuto> with WidgetsBin
         latitude = position.latitude;
         longitude = position.longitude;
       });
-      print("${latitude!.toStringAsFixed(3)}   ${longitude!.toStringAsFixed(3)}");
-      getWeatherData(latitude!.toStringAsFixed(3), longitude!.toStringAsFixed(3));
+      getWeatherData(
+          latitude!.toStringAsFixed(3), longitude!.toStringAsFixed(3));
+      print(
+          "${latitude!.toStringAsFixed(3)}   ${longitude!.toStringAsFixed(3)}");
+
       // getWeatherData(latitude!.toStringAsFixed(3), longitude!.toStringAsFixed(3));
       // _predictCrop();
     }).catchError((e) {
@@ -416,9 +424,9 @@ class _CropPredictionAutoState extends State<CropPredictionAuto> with WidgetsBin
                         ),
                         SizedBox(height: 20),
                         ElevatedButton(
-                          onPressed:(){
+                          onPressed: () {
                             _predictCrop();
-                          } ,
+                          },
                           child: Text('Predict'),
                         ),
                         const SizedBox(

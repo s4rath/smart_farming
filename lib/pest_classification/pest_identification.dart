@@ -8,7 +8,6 @@ import 'package:http/http.dart' as http;
 import 'package:smart_farming/pest_classification/info.dart';
 import 'package:smart_farming/pest_classification/pestdetail.dart';
 
-
 class PestIdentificationPage extends StatefulWidget {
   const PestIdentificationPage({super.key});
 
@@ -17,14 +16,13 @@ class PestIdentificationPage extends StatefulWidget {
 }
 
 class _PestIdentificationPageState extends State<PestIdentificationPage> {
-
   bool loading = false;
   late File _image;
   List _output = [];
   final imagepicker = ImagePicker();
-  int predictedClass= -1;
-  double confidence=0.0;
-    @override
+  int predictedClass = -1;
+  double confidence = 0.0;
+  @override
   void initState() {
     super.initState();
     loading = true;
@@ -33,18 +31,14 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
     //   print('on the detect page');
     //   setState(() {});
     // });
-   
-
-   
   }
 
-
-
   Future<int> predictImage(File imageFile) async {
-
-    var request = http.MultipartRequest('POST', Uri.parse("http://johnhona1.pythonanywhere.com/pest"));
+    var request = http.MultipartRequest(
+        'POST', Uri.parse("http://johnhona1.pythonanywhere.com/pest"));
     request.headers['content-type'] = 'multipart/form-data';
-    request.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
+    request.files
+        .add(await http.MultipartFile.fromPath('file', imageFile.path));
 
     var streamedResponse = await request.send();
     var response = await http.Response.fromStream(streamedResponse);
@@ -54,7 +48,7 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
       var jsonResponse = json.decode(response.body);
       print(jsonResponse);
       int predictedClass = jsonResponse['predicted_class'];
-      confidence=jsonResponse['confidence'];
+      confidence = jsonResponse['confidence'];
       print(confidence.toStringAsFixed(3));
       return predictedClass;
     } else {
@@ -62,72 +56,60 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
     }
   }
 
-
-    pickimage_camera() async {
+  pickimage_camera() async {
     var image = await imagepicker.pickImage(source: ImageSource.camera);
     if (image == null) {
       return null;
     } else {
-       loading=false;
-      setState(() {
-        
-      });
+      loading = false;
+      setState(() {});
       _image = File(image.path);
-     
     }
-    
+
     print("here");
-    predictedClass =await predictImage(_image);
+    predictedClass = await predictImage(_image);
     print('Predicted class: $predictedClass');
-     setState(() {
-      
-    });
+    setState(() {});
   }
 
-   pickimage_gallery() async {
+  pickimage_gallery() async {
     var image = await imagepicker.getImage(source: ImageSource.gallery);
     if (image == null) {
       return null;
     } else {
-      loading=false;
-      setState(() {
-        
-      });
+      loading = false;
+      setState(() {});
       _image = File(image.path);
-      
     }
     print("here");
-   
-    predictedClass =await predictImage(_image);
+
+    predictedClass = await predictImage(_image);
     print('Predicted class: $predictedClass');
-     setState(() {
-      
-    });
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-     var h = MediaQuery.of(context).size.height;
+    var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Pest Identification Page'),
-      ),
-      body:Container(
-        height: h,
-        width: w,
-        child: Column(
+        appBar: AppBar(
+          title: Text('Pest Identification Page'),
+        ),
+        body: Column(
           children: [
             SizedBox(
               height: 90,
-            ), Container(
+            ),
+            Container(
                 child: Text(
               'Pest Detector',
               style: GoogleFonts.getFont('Didact Gothic',
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 30),
-            )),SizedBox(
+            )),
+            SizedBox(
               height: 20,
             ),
             Container(
@@ -140,7 +122,8 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
               //color: Colors.black,
               padding: EdgeInsets.all(10),
               child: Image.asset('assets/images/pest.png'),
-            ), SizedBox(height: 30),
+            ),
+            SizedBox(height: 30),
             Container(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -188,12 +171,15 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
                           pickimage_gallery();
                         }),
                   ),
-                   SizedBox(
-              height: 20,
-            ),
+                  SizedBox(
+                    height: 20,
+                  ),
                 ],
               ),
-            ),SizedBox(height: 20,),
+            ),
+            SizedBox(
+              height: 20,
+            ),
             loading != true
                 ? Container(
                     child: Column(
@@ -215,29 +201,32 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
                         SizedBox(
                           height: 10,
                         ),
-                           if (predictedClass !=-1 && confidence>0.68)
-                           Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Classified as : ${details[predictedClass].title} [${confidence.toStringAsFixed(4)}]',
-                                    style: GoogleFonts.getFont('Didact Gothic',
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 22),
-                                  ),
-                                ],
-                              )
-                              else Text( confidence==0.0 ?"":"Image cannot be detected",
-                                // _output[0]["label"]!=null?
-                                // 'Image cannot be detected likely to be ${_output[0]["label"]}':"Image cannot be detected",
+                        if (predictedClass != -1 && confidence > 0.7)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Classified as : ${details[predictedClass].title} [${confidence.toStringAsFixed(4)}]',
                                 style: GoogleFonts.getFont('Didact Gothic',
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 22),
                               ),
-
-
+                            ],
+                          )
+                        else
+                          Text(
+                            confidence == 0.0
+                                ? ""
+                                : "Image cannot be detected",
+                            // _output[0]["label"]!=null?
+                            // 'Image cannot be detected likely to be ${_output[0]["label"]}':"Image cannot be detected",
+                            style: GoogleFonts.getFont('Didact Gothic',
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22),
+                          ),
+        
                         // _output.isNotEmpty
                         //     ? Row(
                         //         mainAxisAlignment: MainAxisAlignment.center,
@@ -258,48 +247,47 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
                         //             fontWeight: FontWeight.bold,
                         //             fontSize: 22),
                         //       ),
-
-                                     if (predictedClass!=-1 && confidence>0.68)
-                                     Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, left: 20, right: 20),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        if (predictedClass!=-1) {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => Info(
-                                                      predictedClass)));
-                                        }
-                                      },
-                                      child: Container(
-                                        height: 60,
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Colors.black,
-                                        ),
-                                        child: Center(
-                                            child: Text(
-                                          'Know more',
-                                          style: GoogleFonts.getFont(
-                                              'Didact Gothic',
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 26),
-                                        )),
-                                      ),
+        
+                        if (predictedClass != -1 && confidence > 0.7)
+                          Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 10, left: 20, right: 20),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    if (predictedClass != -1) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  Info(predictedClass)));
+                                    }
+                                  },
+                                  child: Container(
+                                    height: 60,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.black,
                                     ),
+                                    child: Center(
+                                        child: Text(
+                                      'Know more',
+                                      style: GoogleFonts.getFont(
+                                          'Didact Gothic',
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 26),
+                                    )),
                                   ),
-                                 
-                                ],
-                              )
-                              else Container(),
-
+                                ),
+                              ),
+                            ],
+                          )
+                        else
+                          Container(),
+        
                         // _output.isNotEmpty
                         //     ? Column(
                         //         children: [
@@ -370,16 +358,13 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
                         //           ),
                         //         ],
                         //       )
-
-
+        
                         //     : Container()
                       ],
                     ),
                   )
                 : Container(),
           ],
-        ),
-      )
-    );
+        ));
   }
 }
