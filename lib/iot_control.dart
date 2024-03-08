@@ -26,19 +26,32 @@ class _IoTControlPageState extends State<IoTControlPage> {
   bool isLoading1 = false;
   bool isLoading2 = false;
   bool isLoading3 = false;
+  // late var timerr;
   final DBref = FirebaseDatabase.instance.reference();
   final Future<FirebaseApp> _fApp = Firebase.initializeApp();
 
   @override
   void initState() {
     super.initState();
-    isLoading = true;
-    isLoading1 = true;
-    isLoading2 = true;
-    getPUMPStatus();
-    getFANStatus();
-    getLEDStatus();
-    getWINDOWStatus();
+    if (mounted) {
+      isLoading = true;
+      isLoading1 = true;
+      isLoading2 = true;
+      getPUMPStatus();
+      getFANStatus();
+      // getLEDStatus();
+      getWINDOWStatus();
+      // checkLdrValueAndToggleLed();
+
+      // timerr = Timer.periodic(
+      //     Duration(seconds: 60), (Timer t) => setState(() {}));
+    }
+  }
+
+  @override
+  void dispose() {
+    // timerr.cancel();
+    super.dispose();
   }
 
   Future<void> getFANStatus() async {
@@ -78,42 +91,27 @@ class _IoTControlPageState extends State<IoTControlPage> {
     }
   }
 
-  Future<void> getLEDStatus() async {
-    await DBref.child('LED_STATUS').once().then((DatabaseEvent event) {
-      DataSnapshot snapshot = event.snapshot;
-      dynamic value = snapshot.value;
+  // Future<void> getLEDStatus() async {
+  //   await DBref.child('LED_STATUS').once().then((DatabaseEvent event) {
+  //     DataSnapshot snapshot = event.snapshot;
+  //     dynamic value = snapshot.value;
 
-      // Check if the value is not null before assigning
-      if (value != null) {
-        setState(() {
-          ledStatus = value as int;
-        });
-        print(ledStatus);
-      } else {
-        // Handle the case where the value is null or not of type int
-        print('Invalid value received: $value');
-      }
-    });
+  //     // Check if the value is not null before assigning
+    //   if (value != null) {
+    //     setState(() {
+    //       ledStatus = value as int;
+    //     });
+    //     print("ledstatus: $ledStatus");
+    //   } else {
+    //     // Handle the case where the value is null or not of type int
+    //     print('Invalid value received: $value');
+    //   }
+    // });
 
-    setState(() {
-      isLoading1 = false;
-    });
-  }
-
-  void button1Pressed() {
-    ledStatus == 0
-        ? DBref.child('LED_STATUS').set(1)
-        : DBref.child('LED_STATUS').set(0);
-    if (ledStatus == 0) {
-      setState(() {
-        ledStatus = 1;
-      });
-    } else {
-      setState(() {
-        ledStatus = 0;
-      });
-    }
-  }
+  //   setState(() {
+  //     isLoading1 = false;
+  //   });
+  // }
 
   Future<void> getPUMPStatus() async {
     await DBref.child('PUMP_STATUS').once().then((DatabaseEvent event) {
@@ -125,7 +123,7 @@ class _IoTControlPageState extends State<IoTControlPage> {
         setState(() {
           PumpStatus = value as int;
         });
-        print(PumpStatus);
+        print("Pumpstatus: $PumpStatus");
       } else {
         // Handle the case where the value is null or not of type int
         print('Invalid value received: $value');
@@ -161,7 +159,7 @@ class _IoTControlPageState extends State<IoTControlPage> {
         setState(() {
           WindowStatus = value as int;
         });
-        print(WindowStatus);
+        print("Window status: $WindowStatus");
       } else {
         // Handle the case where the value is null or not of type int
         print('Invalid value received: $value');
@@ -188,6 +186,52 @@ class _IoTControlPageState extends State<IoTControlPage> {
     }
   }
 
+  void checkLdrValueAndToggleLed() {
+    DatabaseReference ldrReference =
+        FirebaseDatabase.instance.ref().child("Light").child("Ldr_Value");
+
+    ldrReference.once().then((DatabaseEvent event) {
+      // Assuming the data is stored as an integer
+      DataSnapshot snapshot = event.snapshot;
+      dynamic ldrValue = snapshot.value;
+
+      // Check if the value is less than 600
+      if (ldrValue < 600) {
+        // Set ledStatus to 0
+        setLedStatus(0);
+      } else {
+        // Set ledStatus to 1
+        setLedStatus(1);
+      }
+
+      // Toggle the LED based on the updated ledStatus
+      // button1Pressed();
+    });
+  }
+
+  void setLedStatus(int status) {
+    // Your code to set the ledStatus goes here
+    DBref.child("LED_STATUS").set(status);
+
+    setState(() {
+      ledStatus = status;
+    });
+    print("Setting ledStatus to $status");
+    // Add your logic to control the LED based on the status
+  }
+
+  void button1Pressed() {
+    // Your existing logic for button1Pressed
+    ledStatus == 0
+        ? DBref.child('LED_STATUS').set(1)
+        : DBref.child('LED_STATUS').set(0);
+
+    // Toggle the local state
+    setState(() {
+      ledStatus = 1 - ledStatus;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     DatabaseReference ldrReference =
@@ -207,6 +251,24 @@ class _IoTControlPageState extends State<IoTControlPage> {
     ldrReference.onValue.listen((DatabaseEvent event) {
       setState(() {
         ldrValue = event.snapshot.value.toString();
+        int ldr_value= int.parse(event.snapshot.value.toString());
+          if (ldr_value < 600) {
+        // Set ledStatus to 0
+        DBref.child("LED_STATUS").set(1);
+        setState(() {
+        ledStatus=1;
+          
+        });
+
+        
+      } else {
+         DBref.child("LED_STATUS").set(0);
+        setState(() {
+        ledStatus=0;
+          
+        });
+      }
+
       });
     });
 
@@ -235,7 +297,7 @@ class _IoTControlPageState extends State<IoTControlPage> {
       appBar: AppBar(
         title: Text(
           'IoT Control',
-          style: TextStyle(fontSize: 25),
+          style: TextStyle(fontSize: 25, fontStyle: FontStyle.italic),
         ),
       ),
       body: FutureBuilder(
@@ -268,55 +330,25 @@ class _IoTControlPageState extends State<IoTControlPage> {
                     'Smoke Value: $smokeValue',
                     style: TextStyle(fontSize: 20),
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
                     onPressed: () {
-                      buttonPressed();
+                      checkLdrValueAndToggleLed();
                     },
                     child: Text(
                       fanStatus == 0 ? 'Turn Fan On' : 'Turn Fan Off',
-                      style: GoogleFonts.getFont('Didact Gothic',
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24),
+                      style: TextStyle(fontSize: 20),
                     ),
-                  ),
-                  SizedBox(
-                    height: 10,
                   ),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
                     onPressed: () {
                       button1Pressed();
                     },
                     child: Text(
                       ledStatus == 0 ? 'Turn Light On' : 'Turn Light Off',
-                      style: GoogleFonts.getFont('Didact Gothic',
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24),
+                      style: TextStyle(fontSize: 20),
                     ),
-                  ),
-                  SizedBox(
-                    height: 10,
                   ),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
                     onPressed: () {
                       button2Pressed();
                     },
@@ -324,30 +356,16 @@ class _IoTControlPageState extends State<IoTControlPage> {
                       PumpStatus == 0
                           ? 'Turn Water Pump On'
                           : 'Turn Water Pump Off',
-                      style: GoogleFonts.getFont('Didact Gothic',
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24),
+                      style: TextStyle(fontSize: 20),
                     ),
-                  ),
-                  SizedBox(
-                    height: 10,
                   ),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
                     onPressed: () {
                       button3Pressed();
                     },
                     child: Text(
                       WindowStatus == 0 ? 'Slide Window' : 'Shut Windows',
-                      style: GoogleFonts.getFont('Didact Gothic',
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 24),
+                      style: TextStyle(fontSize: 20),
                     ),
                   ),
                 ],
