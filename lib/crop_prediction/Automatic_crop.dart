@@ -18,6 +18,7 @@ class _CropPredictionAutoState extends State<CropPredictionAuto>
   double? longitude;
   final formKey = GlobalKey<FormState>();
   String predictedCrop = "";
+  String dewPoint="";
   List<dynamic> top5Crops = [];
   TextEditingController _nController = TextEditingController();
   TextEditingController _pController = TextEditingController();
@@ -47,36 +48,71 @@ class _CropPredictionAutoState extends State<CropPredictionAuto>
     }
   }
 
-  Future<void> getWeatherData(String latitude, String longitude) async {
-    final apiKey = 'c6e2e5fe63e2405592f190738243101';
-    final apiUrl =
-        'http://api.weatherapi.com/v1/current.json?key=$apiKey&q=$latitude,$longitude';
+  // Future<void> getWeatherData(String latitude, String longitude) async {
+  //   final apiKey = 'c6e2e5fe63e2405592f190738243101';
+  //   final apiUrl =
+  //       'http://api.weatherapi.com/v1/forecast.json?key=$apiKey&q=$latitude,$longitude';
 
-    try {
-      final response = await http.get(Uri.parse(apiUrl));
+  //   try {
+  //     final response = await http.get(Uri.parse(apiUrl));
 
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        final Map<String, dynamic> currentData = data['current'];
-        print(currentData);
-        print(currentData['temp_c'].runtimeType);
-        final String temp = currentData['temp_c'].toString();
-        final String hum = currentData['humidity'].toString();
-        print("$temp $hum");
+  //     if (response.statusCode == 200) {
+  //       final Map<String, dynamic> data = jsonDecode(response.body);
+  //       final Map<String, dynamic> currentData = data['current'];
+  //       print(currentData);
+  //       print(currentData['temp_c'].runtimeType);
+  //       final String temp = currentData['temp_c'].toString();
+  //       final String hum = currentData['humidity'].toString();
 
-        setState(() {
-          temperature = temp;
-          humidity = hum;
-        });
-        // return {'temperature': temperature, 'humidity': humidity};
-      } else {
-        throw Exception(
-            'Failed to load weather data. Status code: ${response.statusCode}');
-      }
-    } catch (error) {
-      throw Exception('Error fetching weather data: $error');
+  //       print("$temp $hum");
+
+  //       setState(() {
+  //         temperature = temp;
+  //         humidity = hum;
+  //       });
+  //       // return {'temperature': temperature, 'humidity': humidity};
+  //     } else {
+  //       throw Exception(
+  //           'Failed to load weather data. Status code: ${response.statusCode}');
+  //     }
+  //   } catch (error) {
+  //     throw Exception('Error fetching weather data: $error');
+  //   }
+  // }
+
+Future<void> getWeatherData(String latitude, String longitude) async {
+  final apiKey = 'c6e2e5fe63e2405592f190738243101';
+  final apiUrl =
+      'http://api.weatherapi.com/v1/forecast.json?key=$apiKey&q=$latitude,$longitude';
+
+  try {
+    final response = await http.get(Uri.parse(apiUrl));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      final Map<String, dynamic> currentData = data['current'];
+      final String temp = currentData['temp_c'].toString();
+      final String hum = currentData['humidity'].toString();
+      
+      // Extract dewpoint from the forecast
+      final Map<String, dynamic> forecastData = data['forecast']['forecastday'][0]['hour'][0];
+      final String dewpoint_c = forecastData['dewpoint_c'].toString();
+      final String dewpoint_f = forecastData['dewpoint_f'].toString();
+      print("$temp $hum $dewpoint_c $dewpoint_f");
+
+      setState(() {
+        temperature = temp;
+        humidity = hum;
+        dewPoint = dewpoint_c;
+      });
+    } else {
+      throw Exception(
+          'Failed to load weather data. Status code: ${response.statusCode}');
     }
+  } catch (error) {
+    throw Exception('Error fetching weather data: $error');
   }
+}
 
   Future<void> _predictCrop() async {
     if (!formKey.currentState!.validate()) {
