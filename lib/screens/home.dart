@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_farming/crop_prediction/crop_predictHome.dart';
-import 'package:smart_farming/iot_control.dart';
-import 'package:smart_farming/login.dart';
-import 'cost_estimation.dart';
-import 'pest_classification/pest_identification.dart';
-import 'weed_classification/weed_identification.dart';
-import 'crop_prediction/crop_prediction.dart';
+import 'package:smart_farming/iot_control/iot_control.dart';
+import 'package:smart_farming/authentication/login.dart';
+import '../cost_estimation/cost_estimation.dart';
+import '../pest_classification/pest_identification.dart';
+import '../weed_classification/weed_identification.dart';
+import '../crop_prediction/crop_prediction.dart';
 import 'dart:math';
 
 

@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smart_farming/home.dart';
-import 'registration.dart';
+import 'package:smart_farming/screens/home.dart';
+import 'authentication/registration.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
@@ -23,7 +23,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

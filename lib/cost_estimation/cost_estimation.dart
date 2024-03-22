@@ -31,6 +31,22 @@ class _CostEstimationPageState extends State<CostEstimationPage> {
         "Statename": _statename.text,
       }),
     );
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(response.body);
+      print(response.body);
+      print(data);
+        for (var result in data) {
+      widgets.add(Text(
+        'Year: ${result['Year']}\n'
+        'Operational Cost: ${result['OperationalCost']}\n'
+        'Fixed Cost: ${result['FixedCost']}\n',
+        style: TextStyle(fontSize: 16),
+      ));
+    }
+    } else {
+      print('Failed to estimate cost. Status code: ${response.statusCode}');
+    }
+
 
     
     setState(() {});
@@ -55,7 +71,7 @@ class _CostEstimationPageState extends State<CostEstimationPage> {
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage(
-                        'assets/images/wp1886339.jpg'), // Replace with your image path
+                        'assets/images/Farmer.jpg'), // Replace with your image path
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -145,21 +161,17 @@ class _CostEstimationPageState extends State<CostEstimationPage> {
                           ),
                         ),
                      
-                        SizedBox(height: 20),
+                        SizedBox(height: 10),
                         ElevatedButton(
                           onPressed: costEstimate,
                           child: Text('Estimate Cost'),
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                    
                         
                          SizedBox(
                           height: 10,
                         ),
                        
-                      ]
+                      ]+widgets
                     ),
                   ),
                 ),

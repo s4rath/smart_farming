@@ -2,21 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:smart_farming/functions.dart';
+
 import 'package:http/http.dart' as http;
 
-// void main() {
-//   runApp(MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: CropPredictionPage(),
-//     );
-//   }
-// }
+import 'crop_details.dart';
 
 class CropPredictionPage extends StatefulWidget {
   @override
@@ -25,7 +14,6 @@ class CropPredictionPage extends StatefulWidget {
 
 class _CropPredictionPageState extends State<CropPredictionPage> {
   final formKey = GlobalKey<FormState>();
-  final _numberController = TextEditingController();
   String url = '';
   // var data;
   // String output = 'initial';
@@ -100,8 +88,8 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
               Center(
                 child: Container(
                   alignment: Alignment.center,
-                  // height: MediaQuery.of(context).size.height / 1.3,
-                  width: MediaQuery.of(context).size.width / 1.1,
+                  // height: 700,
+                  width: 200,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(22),
@@ -112,304 +100,352 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: TextFormField(
-                            controller: _nController,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "Please Enter a Value";
-                              } else {
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(
-                              labelText: 'Nitrogen', hintText: '',
-                              hintStyle: TextStyle(color: Colors.grey),
-                              // prefixIcon: Icon(
-                              //   Icons.phone,
-                              //   color: Style.grey,
-                              // ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              border: new OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
+                          child: Container(
+                            width: 200,
+                            child: TextFormField(
+                              controller: _nController,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return "Please Enter a Value";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Nitrogen',
+                                hintText: '',
+                                hintStyle: TextStyle(color: Colors.grey),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(20.0),
                                 ),
-                                borderSide: new BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
+                                border: new OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                  borderSide:
+                                      new BorderSide(color: Colors.grey),
                                 ),
-                                borderSide:
-                                    BorderSide(width: 1, color: Colors.grey),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                  borderSide:
+                                      BorderSide(width: 1, color: Colors.grey),
+                                ),
                               ),
+                              keyboardType: TextInputType.number,
                             ),
-                            keyboardType: TextInputType.number,
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: TextFormField(
-                            controller: _pController,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "Please Enter a Value";
-                              } else {
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(
-                              labelText: 'Phosphorous', hintText: '',
-                              hintStyle: TextStyle(color: Colors.grey),
-                              // prefixIcon: Icon(
-                              //   Icons.phone,
-                              //   color: Style.grey,
-                              // ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              border: new OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
+                          child: Container(
+                            width: 200,
+                            child: TextFormField(
+                              controller: _pController,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return "Please Enter a Value";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Phosphorous', hintText: '',
+                                hintStyle: TextStyle(color: Colors.grey),
+                                // prefixIcon: Icon(
+                                //   Icons.phone,
+                                //   color: Style.grey,
+                                // ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(20.0),
                                 ),
-                                borderSide: new BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
+                                border: new OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                  borderSide:
+                                      new BorderSide(color: Colors.grey),
                                 ),
-                                borderSide:
-                                    BorderSide(width: 1, color: Colors.grey),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                  borderSide:
+                                      BorderSide(width: 1, color: Colors.grey),
+                                ),
                               ),
+                              keyboardType: TextInputType.number,
                             ),
-                            keyboardType: TextInputType.number,
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: TextFormField(
-                            controller: _kController,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "Please Enter a Value";
-                              } else {
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(
-                              labelText: 'Potassium', hintText: '',
-                              hintStyle: TextStyle(color: Colors.grey),
-                              // prefixIcon: Icon(
-                              //   Icons.phone,
-                              //   color: Style.grey,
-                              // ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              border: new OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
+                          child: Container(
+                            width: 200,
+                            child: TextFormField(
+                              controller: _kController,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return "Please Enter a Value";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Potassium', hintText: '',
+                                hintStyle: TextStyle(color: Colors.grey),
+                                // prefixIcon: Icon(
+                                //   Icons.phone,
+                                //   color: Style.grey,
+                                // ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(20.0),
                                 ),
-                                borderSide: new BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
+                                border: new OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                  borderSide:
+                                      new BorderSide(color: Colors.grey),
                                 ),
-                                borderSide:
-                                    BorderSide(width: 1, color: Colors.grey),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                  borderSide:
+                                      BorderSide(width: 1, color: Colors.grey),
+                                ),
                               ),
+                              keyboardType: TextInputType.number,
                             ),
-                            keyboardType: TextInputType.number,
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: TextFormField(
-                            controller: _temperatureController,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "Please Enter a Value";
-                              } else {
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(
-                              labelText: 'Temperature', hintText: '',
-                              hintStyle: TextStyle(color: Colors.grey),
-                              // prefixIcon: Icon(
-                              //   Icons.phone,
-                              //   color: Style.grey,
-                              // ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              border: new OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
+                          child: Container(
+                            width: 200,
+                            child: TextFormField(
+                              controller: _temperatureController,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return "Please Enter a Value";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Temperature', hintText: '',
+                                hintStyle: TextStyle(color: Colors.grey),
+                                // prefixIcon: Icon(
+                                //   Icons.phone,
+                                //   color: Style.grey,
+                                // ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(20.0),
                                 ),
-                                borderSide: new BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
+                                border: new OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                  borderSide:
+                                      new BorderSide(color: Colors.grey),
                                 ),
-                                borderSide:
-                                    BorderSide(width: 1, color: Colors.grey),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                  borderSide:
+                                      BorderSide(width: 1, color: Colors.grey),
+                                ),
                               ),
+                              keyboardType: TextInputType.number,
                             ),
-                            keyboardType: TextInputType.number,
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: TextFormField(
-                            controller: _humidityController,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "Please Enter a Value";
-                              } else {
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(
-                              labelText: 'Humidity', hintText: '',
-                              hintStyle: TextStyle(color: Colors.grey),
-                              // prefixIcon: Icon(
-                              //   Icons.phone,
-                              //   color: Style.grey,
-                              // ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              border: new OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
+                          child: Container(
+                            width: 200,
+                            child: TextFormField(
+                              controller: _humidityController,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return "Please Enter a Value";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Humidity', hintText: '',
+                                hintStyle: TextStyle(color: Colors.grey),
+                                // prefixIcon: Icon(
+                                //   Icons.phone,
+                                //   color: Style.grey,
+                                // ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(20.0),
                                 ),
-                                borderSide: new BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
+                                border: new OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                  borderSide:
+                                      new BorderSide(color: Colors.grey),
                                 ),
-                                borderSide:
-                                    BorderSide(width: 1, color: Colors.grey),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                  borderSide:
+                                      BorderSide(width: 1, color: Colors.grey),
+                                ),
                               ),
+                              keyboardType: TextInputType.number,
                             ),
-                            keyboardType: TextInputType.number,
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: TextFormField(
-                            controller: _phController,
-                            decoration: InputDecoration(
-                              labelText: 'pH',
-                              hintText: '',
-                              hintStyle: TextStyle(color: Colors.grey),
-                              // prefixIcon: Icon(
-                              //   Icons.phone,
-                              //   color: Style.grey,
-                              // ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              border: new OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
+                          child: Container(
+                            width: 200,
+                            child: TextFormField(
+                              controller: _phController,
+                              decoration: InputDecoration(
+                                labelText: 'pH',
+                                hintText: '',
+                                hintStyle: TextStyle(color: Colors.grey),
+                                // prefixIcon: Icon(
+                                //   Icons.phone,
+                                //   color: Style.grey,
+                                // ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(20.0),
                                 ),
-                                borderSide: new BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
+                                border: new OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                  borderSide:
+                                      new BorderSide(color: Colors.grey),
                                 ),
-                                borderSide:
-                                    BorderSide(width: 1, color: Colors.grey),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                  borderSide:
+                                      BorderSide(width: 1, color: Colors.grey),
+                                ),
                               ),
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return "Please Enter a Value";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              // decoration: InputDecoration(),
+                              keyboardType: TextInputType.number,
                             ),
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "Please Enter a Value";
-                              } else {
-                                return null;
-                              }
-                            },
-                            // decoration: InputDecoration(),
-                            keyboardType: TextInputType.number,
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: TextFormField(
-                            controller: _rainfallController,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "Please Enter a Value";
-                              } else {
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(
-                              labelText: 'Rainfall', hintText: '',
-                              hintStyle: TextStyle(color: Colors.grey),
-                              // prefixIcon: Icon(
-                              //   Icons.phone,
-                              //   color: Style.grey,
-                              // ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              border: new OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
+                          child: Container(
+                            width: 200,
+                            child: TextFormField(
+                              controller: _rainfallController,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return "Please Enter a Value";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Rainfall', hintText: '',
+                                hintStyle: TextStyle(color: Colors.grey),
+                                // prefixIcon: Icon(
+                                //   Icons.phone,
+                                //   color: Style.grey,
+                                // ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(20.0),
                                 ),
-                                borderSide: new BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
+                                border: new OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                  borderSide:
+                                      new BorderSide(color: Colors.grey),
                                 ),
-                                borderSide:
-                                    BorderSide(width: 1, color: Colors.grey),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                  borderSide:
+                                      BorderSide(width: 1, color: Colors.grey),
+                                ),
                               ),
+                              keyboardType: TextInputType.number,
                             ),
-                            keyboardType: TextInputType.number,
                           ),
                         ),
-                        SizedBox(height: 20),
+                        SizedBox(height: 5),
                         ElevatedButton(
                           onPressed: _predictCrop,
                           child: Text('Predict'),
                         ),
                         const SizedBox(
-                          height: 20,
+                          height: 5,
                         ),
-                        predictedCrop == ""
-                            ? Text("")
-                            : Text(
-                                "predicted crop : ${predictedCrop}",
-                                style: const TextStyle(
-                                    fontSize: 20, color: Colors.green),
+                        if (predictedCrop.isNotEmpty)
+                          Text(
+                            "Predicted Crop: $predictedCrop",
+                            style: TextStyle(fontSize: 20, color: Colors.green),
+                          ),
+                        const SizedBox(height: 5),
+                        // if (top5Crops.isNotEmpty)
+                        //   Text(
+                        //     "Top 5 Crops: ${top5Crops.join(", ")}",
+                        //     style: TextStyle(fontSize: 20, color: Colors.green),
+                        //   ),
+                        if (predictedCrop.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 10, left: 20, right: 20),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => CropPage(predictedCrop: predictedCrop,top5crops: top5Crops,)));
+                              },
+                              child: Container(
+                                height: 60,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.black,
+                                ),
+                                child: Center(
+                                    child: Text(
+                                  'Know more',
+                                  style: GoogleFonts.getFont('Didact Gothic',
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 26),
+                                )),
                               ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        top5Crops.isEmpty
-                            ? Text("")
-                            : Text(
-                                "Top 5 crops: ${top5Crops.join(", ")}",
-                                style: const TextStyle(
-                                    fontSize: 20, color: Colors.green),
-                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
