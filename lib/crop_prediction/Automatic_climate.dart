@@ -7,14 +7,14 @@ import 'package:http/http.dart' as http;
 import 'package:smart_farming/crop_prediction/crop_details.dart';
 import 'package:smart_farming/crop_prediction/crop_prediction_model.dart';
 
-class CropPredictionAuto extends StatefulWidget {
-  const CropPredictionAuto({super.key});
+class CropAutomaticClimate extends StatefulWidget {
+  const CropAutomaticClimate({super.key});
 
   @override
-  State<CropPredictionAuto> createState() => _CropPredictionAutoState();
+  State<CropAutomaticClimate> createState() => _CropPredictionAutoState();
 }
 
-class _CropPredictionAutoState extends State<CropPredictionAuto>
+class _CropPredictionAutoState extends State<CropAutomaticClimate>
     with WidgetsBindingObserver {
   Position? _currentPosition;
   double? latitude;
@@ -133,18 +133,14 @@ Future<void> getWeatherData(String latitude, String longitude) async {
       print('Invalid temperature or humidity value.');
       return null;
     }
-    final apiUrl = 'http://johnhona1.pythonanywhere.com/predict';
+    final apiUrl = 'http://johnhona1.pythonanywhere.com/automatepredict';
 
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
-        "N": double.parse(_nController.text),
-        "P": double.parse(_pController.text),
-        "k": double.parse(_kController.text),
         "temperature": tempValue,
         "humidity": humidityValue,
-        "ph": double.parse(_phController.text),
         "rainfall": double.parse(_rainfallController.text),
       }),
     );
@@ -268,164 +264,6 @@ Future<void> getWeatherData(String latitude, String longitude) async {
                     padding: const EdgeInsets.only(top: 20, right: 8, left: 8),
                     child: Column(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: TextFormField(
-                            controller: _nController,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "Please Enter a Value";
-                              } else {
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(
-                              labelText: 'Nitrogen', hintText: '',
-                              hintStyle: TextStyle(color: Colors.grey),
-                              // prefixIcon: Icon(
-                              //   Icons.phone,
-                              //   color: Style.grey,
-                              // ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              border: new OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
-                                ),
-                                borderSide: new BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
-                                ),
-                                borderSide:
-                                    BorderSide(width: 1, color: Colors.grey),
-                              ),
-                            ),
-                            keyboardType: TextInputType.number,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: TextFormField(
-                            controller: _pController,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "Please Enter a Value";
-                              } else {
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(
-                              labelText: 'Phosphorous', hintText: '',
-                              hintStyle: TextStyle(color: Colors.grey),
-                              // prefixIcon: Icon(
-                              //   Icons.phone,
-                              //   color: Style.grey,
-                              // ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              border: new OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
-                                ),
-                                borderSide: new BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
-                                ),
-                                borderSide:
-                                    BorderSide(width: 1, color: Colors.grey),
-                              ),
-                            ),
-                            keyboardType: TextInputType.number,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: TextFormField(
-                            controller: _kController,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "Please Enter a Value";
-                              } else {
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(
-                              labelText: 'Potassium', hintText: '',
-                              hintStyle: TextStyle(color: Colors.grey),
-                              // prefixIcon: Icon(
-                              //   Icons.phone,
-                              //   color: Style.grey,
-                              // ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              border: new OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
-                                ),
-                                borderSide: new BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
-                                ),
-                                borderSide:
-                                    BorderSide(width: 1, color: Colors.grey),
-                              ),
-                            ),
-                            keyboardType: TextInputType.number,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: TextFormField(
-                            controller: _phController,
-                            decoration: InputDecoration(
-                              labelText: 'pH',
-                              hintText: '',
-                              hintStyle: TextStyle(color: Colors.grey),
-                              // prefixIcon: Icon(
-                              //   Icons.phone,
-                              //   color: Style.grey,
-                              // ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              border: new OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
-                                ),
-                                borderSide: new BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20),
-                                ),
-                                borderSide:
-                                    BorderSide(width: 1, color: Colors.grey),
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "Please Enter a Value";
-                              } else {
-                                return null;
-                              }
-                            },
-                            // decoration: InputDecoration(),
-                            keyboardType: TextInputType.number,
-                          ),
-                        ),
                         Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: TextFormField(
