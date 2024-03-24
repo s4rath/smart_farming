@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:smart_farming/crop_prediction/crop_prediction_model.dart';
 
 import 'crop_details.dart';
 
@@ -26,10 +27,11 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
   TextEditingController _humidityController = TextEditingController();
   TextEditingController _phController = TextEditingController();
   TextEditingController _rainfallController = TextEditingController();
+  late CropPrediction cropPrediction;
 
-  Future<void> _predictCrop() async {
+  Future<CropPrediction?> _predictCrop() async {
     if (!formKey.currentState!.validate()) {
-      return;
+      return null;
     }
     final apiUrl = 'http://johnhona1.pythonanywhere.com/predict';
     print(
@@ -49,16 +51,21 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
     );
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> data = jsonDecode(response.body);
-      predictedCrop = data['predicted_crop'];
-      top5Crops = data['top_5_crops'];
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      print(data);
+      return CropPrediction.fromJson(data);
+      // Map<String, dynamic> data = jsonDecode(response.body);
+      // print(data);
+      // predictedCrop = data['predicted_crop'];
+      // top5Crops = data['top_5_crops'];
 
-      print("Predicted Crop: $predictedCrop");
-      print("Top 5 Predicted Crops: $top5Crops");
+      // print("Predicted Crop: $predictedCrop");
+      // print("Top 5 Predicted Crops: $top5Crops");
     } else {
       print('Failed to make prediction. Status code: ${response.statusCode}');
     }
     setState(() {});
+    return null;
   }
 
   @override
@@ -400,7 +407,15 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                         ),
                         SizedBox(height: 5),
                         ElevatedButton(
-                          onPressed: _predictCrop,
+                          onPressed: () async {
+                            final prediction = await _predictCrop();
+                            cropPrediction=prediction!;
+                            predictedCrop=prediction.predictedCrop;
+                            top5Crops=prediction.top5Crops;
+                            setState(() {
+                              
+                            });
+                          },
                           child: Text('Predict'),
                         ),
                         const SizedBox(
@@ -426,7 +441,10 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => CropPage(predictedCrop: predictedCrop,top5crops: top5Crops,)));
+                                        builder: (context) => CropPage(
+                                              predictedCrop: predictedCrop,
+                                              top5crops: top5Crops,cropPrediction: cropPrediction,
+                                            )));
                               },
                               child: Container(
                                 height: 60,

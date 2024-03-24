@@ -1,17 +1,24 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:intl/intl.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:geolocator/geolocator.dart';
+import 'dart:math';
 class IoTControlPage extends StatefulWidget {
   @override
   _IoTControlPageState createState() => _IoTControlPageState();
 }
 
-class _IoTControlPageState extends State<IoTControlPage> {
+class _IoTControlPageState extends State<IoTControlPage>
+    with WidgetsBindingObserver {
+  double displayHum = 0.0;
   String ldrValue = '';
   String soilMoistureValue = '';
   String temperatureValue = '';
@@ -24,14 +31,12 @@ class _IoTControlPageState extends State<IoTControlPage> {
   int _timerDuration1 = 0;
   late Timer _countdownTimer1;
   bool _isSoilCheckPaused = false;
-
   int _timerDuration2 = 0;
   late Timer _countdownTimer2;
   bool _isClimateCheckPaused = false;
   int _timerDuration3 = 0;
   late Timer _countdownTimer3;
   bool _isEnvironmentCheckPaused = false;
-
   TextEditingController _timerController3 = TextEditingController();
   TextEditingController _timerController4 = TextEditingController();
   TextEditingController _timerController1 = TextEditingController();
@@ -48,10 +53,17 @@ class _IoTControlPageState extends State<IoTControlPage> {
   bool isLoading1 = false;
   bool isLoading2 = false;
   bool isLoading3 = false;
+  bool isLoading4 = false;
   bool _isUserControl = false;
   bool _isUserControl1 = false;
   final DBref = FirebaseDatabase.instance.reference();
   final Future<FirebaseApp> _fApp = Firebase.initializeApp();
+  double relativeHumidity = 0.0;
+  String dewPoint = '';
+  String Humidity = '';
+  Position? _currentPosition;
+  double? latitude;
+  double? longitude;
 
   @override
   void initState() {
@@ -63,7 +75,10 @@ class _IoTControlPageState extends State<IoTControlPage> {
     getFANStatus();
     getLEDStatus();
     getWINDOWStatus();
+    tz.initializeTimeZones();
     bool _isUserFanControlled = false;
+    WidgetsBinding.instance.addObserver(this);
+    _checkLocationPermission();
   }
 
   void dispose() {
@@ -75,9 +90,88 @@ class _IoTControlPageState extends State<IoTControlPage> {
     _pauseTimer2?.cancel();
     _timerController3.dispose();
     _pauseTimer3?.cancel();
-
+    WidgetsBinding.instance.removeObserver(this);
     /// Cancel the timer to avoid memory leaks
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      _checkLocationPermission();
+    }
+  }
+  Future<void> getWeatherData(String latitude, String longitude) async {
+    final apiKey = 'c6e2e5fe63e2405592f190738243101';
+    final apiUrl =
+        'http://api.weatherapi.com/v1/forecast.json?key=$apiKey&q=$latitude,$longitude';
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        final Map<String, dynamic> forecastData =
+        data['forecast']['forecastday'][0]['hour'][0];
+        final String dewpoint_c = forecastData['dewpoint_c'].toString();
+        setState(() {
+          dewPoint = dewpoint_c;
+          print(dewPoint);
+        });
+
+        setState(() {
+          relativeHumidity =  100 - 5 * (double.parse(temperatureValue) - double.parse(dewPoint));
+          Humidity = relativeHumidity.toString();
+        });
+      } else {
+        throw Exception(
+            'Failed to load weather data. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      throw Exception('Error fetching weather data: $error');
+    }
+  }
+
+  Future<void> _checkLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      return;
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return;
+    }
+    _getCurrentLocation();
+  }
+
+  _getCurrentLocation() {
+    Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best,
+        forceAndroidLocationManager: true)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+        latitude = position.latitude;
+        longitude = position.longitude;
+      });
+      getWeatherData(
+          latitude!.toStringAsFixed(3), longitude!.toStringAsFixed(3));
+      print(
+          "${latitude!.toStringAsFixed(3)}   ${longitude!.toStringAsFixed(3)}");
+      // getWeatherData(latitude!.toStringAsFixed(3), longitude!.toStringAsFixed(3));
+      // _predictCrop();
+    }).catchError((e) {
+      print(e);
+    });
   }
 
 //Fan Control begins here
@@ -97,7 +191,6 @@ class _IoTControlPageState extends State<IoTControlPage> {
         print('Invalid value received: $value');
       }
     });
-
     setState(() {
       isLoading = false;
     });
@@ -130,31 +223,28 @@ class _IoTControlPageState extends State<IoTControlPage> {
   void _startTimer1() {
     // Pause automatic checking based on user input seconds
     int timerSeconds1 = int.tryParse(_timerController1.text) ?? 20;
-
     setState(() {
       _isClimateCheckPaused = true;
       _isUserControl = true; // Set to true when user manually controls the fan
       _timerDuration1 = timerSeconds1;
     });
-
     _countdownTimer1 = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         _timerDuration1--;
       });
-
       if (_timerDuration1 == 0) {
         // Resume automatic checking after specified seconds
         setState(() {
           _isClimateCheckPaused = false;
           _isUserControl =
-              false; // Reset to false when user-controlled time is over
+          false; // Reset to false when user-controlled time is over
         });
-
+        // Get the latest status of the fan
+        getFANStatus();
         // Cancel the countdown timer
         _countdownTimer1.cancel();
       }
     });
-
     // Your existing button functionality here
     // For example, toggle FAN_STATUS immediately when the button is pressed
     if (fanStatus == 0) {
@@ -173,16 +263,26 @@ class _IoTControlPageState extends State<IoTControlPage> {
   Future<void> _checkClimateValue() async {
     // Check if the user is not currently controlling the fan manually
     if (!_isUserControl &&
-        (int.tryParse(temperatureValue) != null &&
-                int.parse(temperatureValue) > 35 ||
-            int.tryParse(HumidityValue) != null &&
-                int.parse(HumidityValue) > 60 ||
+        (double.tryParse(temperatureValue) != null &&
+            double.parse(temperatureValue) > 35.0 ||
+            double.tryParse(Humidity) != null &&
+                double.parse(Humidity) > 60.0 ||
             int.tryParse(smokeValue) != null && int.parse(smokeValue) > 150)) {
       // Trigger the fan to ON state
       await DBref.child('FAN_STATUS').set(1);
       setState(() {
         fanStatus = 1;
       });
+    } else {
+      if (!_isUserControl) {
+        await DBref.child('FAN_STATUS').set(0);
+        setState(() {
+          fanStatus = 0;
+        });
+      } else {
+        // Get the latest status of the fan
+        getFANStatus();
+      }
     }
   }
 
@@ -192,7 +292,6 @@ class _IoTControlPageState extends State<IoTControlPage> {
     await DBref.child('LED_STATUS').once().then((DatabaseEvent event) {
       DataSnapshot snapshot = event.snapshot;
       dynamic value = snapshot.value;
-
       // Check if the value is not null before assigning
       if (value != null) {
         setState(() {
@@ -211,8 +310,8 @@ class _IoTControlPageState extends State<IoTControlPage> {
   }
 
   void _startTimer2() {
+    // Pause automatic checking based on user input seconds
     int timerSeconds2 = int.tryParse(_timerController2.text) ?? 20;
-
     setState(() {
       _isLdrCheckPaused = true;
       _timerDuration2 = timerSeconds2;
@@ -222,20 +321,29 @@ class _IoTControlPageState extends State<IoTControlPage> {
       setState(() {
         _timerDuration2--;
       });
-
       if (_timerDuration2 == 0) {
+        // Resume automatic checking after specified seconds
         setState(() {
           _isLdrCheckPaused = false;
         });
+        // Cancel the countdown timer
+        getLEDStatus();
         _countdownTimer2.cancel();
       }
     });
-
-    // Toggle LED_STATUS immediately when the button is pressed
-    setState(() {
-      ledStatus = (ledStatus == 0) ? 1 : 0;
-    });
-    DBref.child('LED_STATUS').set(ledStatus);
+    // Your existing button functionality here
+    // For example, toggle LED_STATUS immediately when the button is pressed
+    if (ledStatus == 0) {
+      DBref.child('LED_STATUS').set(1);
+      setState(() {
+        ledStatus = 1;
+      });
+    } else {
+      DBref.child('LED_STATUS').set(0);
+      setState(() {
+        ledStatus = 0;
+      });
+    }
   }
 
   void button2Pressed() {
@@ -263,24 +371,31 @@ class _IoTControlPageState extends State<IoTControlPage> {
   }
 
   // Toggle LED_STATUS immediately when the button is pressed
-
   Future<void> _checkLdrValue() async {
+    // Get the current Indian time
+    tz.Location ist = tz.getLocation('Asia/Kolkata');
+    tz.TZDateTime currentTime = tz.TZDateTime.now(ist);
+    // Format the current time to get only the hour component
+    int currentHour = currentTime.hour;
+    // Check if the current time is between 10 AM and 4 PM
     if (!_isLdrCheckPaused &&
+        currentHour >= 10 &&
+        currentHour < 16 &&
         int.tryParse(ldrValue) != null &&
         int.parse(ldrValue) < 600) {
       await DBref.child('LED_STATUS').set(1);
       setState(() {
         ledStatus = 1;
       });
-    }
-    //changed
-    if (!_isLdrCheckPaused &&
-        int.tryParse(ldrValue) != null &&
-        int.parse(ldrValue) > 600) {
-      await DBref.child('LED_STATUS').set(0);
-      setState(() {
-        ledStatus = 0;
-      });
+    } else {
+      if (!_isLdrCheckPaused) {
+        await DBref.child('LED_STATUS').set(0);
+        setState(() {
+          ledStatus = 0;
+        });
+      } else {
+        getLEDStatus();
+      }
     }
   }
 
@@ -290,7 +405,6 @@ class _IoTControlPageState extends State<IoTControlPage> {
     await DBref.child('PUMP_STATUS').once().then((DatabaseEvent event) {
       DataSnapshot snapshot = event.snapshot;
       dynamic value = snapshot.value;
-
       // Check if the value is not null before assigning
       if (value != null) {
         setState(() {
@@ -333,24 +447,20 @@ class _IoTControlPageState extends State<IoTControlPage> {
 
   void _startTimer3() {
     // Pause automatic checking based on user input seconds
-    int timerSeconds3 = int.tryParse(_timerController1.text) ?? 20;
-
+    int timerSeconds3 = int.tryParse(_timerController3.text) ?? 20;
     setState(() {
       _isSoilCheckPaused = true;
       _timerDuration3 = timerSeconds3;
     });
-
     _countdownTimer3 = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         _timerDuration3--;
       });
-
       if (_timerDuration3 == 0) {
         // Resume automatic checking after specified seconds
         setState(() {
           _isSoilCheckPaused = false;
         });
-
         // Cancel the countdown timer
         _countdownTimer3.cancel();
       }
@@ -358,14 +468,14 @@ class _IoTControlPageState extends State<IoTControlPage> {
 
     // Update PumpStatus and PUMP_STATUS together
     if (PumpStatus == 0) {
+      DBref.child('PUMP_STATUS').set(1);
       setState(() {
         PumpStatus = 1;
-        DBref.child('PUMP_STATUS').set(1);
       });
     } else {
+      DBref.child('PUMP_STATUS').set(0);
       setState(() {
         PumpStatus = 0;
-        DBref.child('PUMP_STATUS').set(0);
       });
     }
   }
@@ -379,15 +489,15 @@ class _IoTControlPageState extends State<IoTControlPage> {
       setState(() {
         PumpStatus = 1;
       });
-    }
-    if (!_isSoilCheckPaused &&
-        int.tryParse(soilMoistureValue) != null &&
-        int.parse(soilMoistureValue) < 600) {
-      await DBref.child('PUMP_STATUS').set(0);
-
-      setState(() {
-        PumpStatus = 0;
-      });
+    } else {
+      if (!_isSoilCheckPaused) {
+        await DBref.child('PUMP_STATUS').set(0);
+        setState(() {
+          PumpStatus = 0;
+        });
+      } else {
+        getPUMPStatus();
+      }
     }
   }
 
@@ -408,7 +518,6 @@ class _IoTControlPageState extends State<IoTControlPage> {
         print('Invalid value received: $value');
       }
     });
-
     setState(() {
       isLoading3 = false;
     });
@@ -441,13 +550,11 @@ class _IoTControlPageState extends State<IoTControlPage> {
   void _startTimer4() {
     // Pause automatic checking based on user input seconds
     int timerSeconds4 = int.tryParse(_timerController4.text) ?? 20;
-
     setState(() {
       _isEnvironmentCheckPaused = true;
       _isUserControl1 = true; // Set to true when user manually controls the fan
       _timerDuration4 = timerSeconds4;
     });
-
     _countdownTimer4 = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         _timerDuration4--;
@@ -458,72 +565,65 @@ class _IoTControlPageState extends State<IoTControlPage> {
         setState(() {
           _isEnvironmentCheckPaused = false;
           _isUserControl1 =
-              false; // Reset to false when user-controlled time is over
+          false; // Reset to false when user-controlled time is over
         });
-
+        getWINDOWStatus();
         // Cancel the countdown timer
         _countdownTimer4.cancel();
       }
     });
-
     // Your existing button functionality here
     // For example, toggle FAN_STATUS immediately when the button is pressed
-    WindowStatus == 0
-        ? DBref.child('WINDOW_STATUS').set(1)
-        : DBref.child('WINDOW_STATUS').set(0);
-
-    setState(() {
-      if (WindowStatus == 0) {
+    if (WindowStatus == 0) {
+      DBref.child('WINDOW_STATUS').set(1);
+      setState(() {
         WindowStatus = 1;
-        DBref.child('WINDOW_STATUS').set(1);
-      } else {
+      });
+    } else {
+      DBref.child('WINDOW_STATUS').set(0);
+      setState(() {
         WindowStatus = 0;
-        DBref.child('WINDOW_STATUS').set(0);
-      }
-    });
+      });
+    }
   }
 
   Future<void> _checkEnvironmentValue() async {
     // Check if the user is not currently controlling the fan manually
     if (!_isUserControl1 &&
-        (int.tryParse(temperatureValue) != null &&
-                int.parse(temperatureValue) > 35 ||
-            int.tryParse(HumidityValue) != null &&
-                int.parse(HumidityValue) > 60 ||
+        (double.tryParse(temperatureValue) != null &&
+            double.parse(temperatureValue) > 40.0 ||
+            double.tryParse(Humidity) != null &&
+                double.parse(Humidity) > 60.0 ||
             int.tryParse(smokeValue) != null && int.parse(smokeValue) > 150)) {
       // Trigger the fan to ON state
       await DBref.child('WINDOW_STATUS').set(1);
       setState(() {
         WindowStatus = 1;
       });
+    } else {
+      if (!_isUserControl1) {
+        await DBref.child('WINDOW_STATUS').set(0);
+        setState(() {
+          WindowStatus = 0;
+        });
+      } else {
+        getWINDOWStatus();
+      }
     }
-    //changed
-    //   if (!_isUserControl1 &&
-    //     (int.tryParse(temperatureValue) != null &&
-    //             int.parse(temperatureValue) < 35 ||
-    //         int.tryParse(HumidityValue) != null &&
-    //             int.parse(HumidityValue) < 60 ||
-    //         int.tryParse(smokeValue) != null && int.parse(smokeValue) < 150)) {
-    //   // Trigger the fan to ON state
-    //   await DBref.child('WINDOW_STATUS').set(0);
-    //   setState(() {
-    //     WindowStatus = 0;
-    //   });
-    // }
   }
 
   @override
   Widget build(BuildContext context) {
     DatabaseReference ldrReference =
-        FirebaseDatabase.instance.ref().child("Light").child("Ldr_Value");
+    FirebaseDatabase.instance.ref().child("Light").child("Ldr_Value");
     DatabaseReference soilReference =
-        FirebaseDatabase.instance.ref().child("Soil").child("Soil_Moisture");
+    FirebaseDatabase.instance.ref().child("Soil").child("Soil_Moisture");
     DatabaseReference TemperatureReference = FirebaseDatabase.instance
         .ref()
         .child("Temperature")
         .child("Celsius_Value");
     DatabaseReference SmokeReference =
-        FirebaseDatabase.instance.ref().child("Smoke").child("PPM_Value");
+    FirebaseDatabase.instance.ref().child("Smoke").child("PPM_Value");
     DatabaseReference HumidityReference = FirebaseDatabase.instance
         .ref()
         .child("Humidity")
@@ -535,11 +635,9 @@ class _IoTControlPageState extends State<IoTControlPage> {
       _checkLdrValue();
       _checkEnvironmentValue();
     });
-
     soilReference.onValue.listen((DatabaseEvent event) {
       setState(() {
         soilMoistureValue = event.snapshot.value.toString();
-        // print("ldrvlaue: $soilMoistureValue");
       });
       _checkSoilValue();
     });
@@ -617,12 +715,12 @@ class _IoTControlPageState extends State<IoTControlPage> {
                               SizedBox(height: 5),
                               Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Light Intensity:  ${ldrValue}nm',
@@ -653,7 +751,7 @@ class _IoTControlPageState extends State<IoTControlPage> {
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Temperature: $temperatureValue°C',
@@ -664,7 +762,7 @@ class _IoTControlPageState extends State<IoTControlPage> {
                                         ),
                                         SizedBox(height: 5),
                                         Text(
-                                          'Humidity: $HumidityValue%RH',
+                                          'Humidity: ${Humidity}%RH',
                                           style: TextStyle(
                                             fontSize: 16,
                                             color: Colors.white,

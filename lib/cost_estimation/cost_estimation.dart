@@ -46,11 +46,9 @@ class _CostEstimationPageState extends State<CostEstimationPage> {
     } else {
       print('Failed to estimate cost. Status code: ${response.statusCode}');
     }
-
-
-    
     setState(() {});
   }
+  
   
   @override
   Widget build(BuildContext context) {
