@@ -11,7 +11,6 @@ import '../weed_classification/weed_identification.dart';
 import '../crop_prediction/crop_prediction.dart';
 import 'dart:math';
 
-
 class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
@@ -20,9 +19,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final List<String> imagePaths = [
     'assets/images/crop.png',
-    'assets/images/weed.png',
-    'assets/images/pest.png',
+    'assets/images/weedicon.png',
+    'assets/images/pesticon.png',
     'assets/images/cost.png',
+    'assets/images/iot-modified.png',
   ];
 
   final List<String> pageNames = [
@@ -30,36 +30,30 @@ class _HomePageState extends State<HomePage> {
     'Weed Identification',
     'Pest Identification',
     'Cost Estimation',
+    'Greenhouse Control'
   ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Home Page'),
-          actions: [
-              PopupMenuButton<String>(
+      appBar: AppBar(
+        title: Text('Home Page'),
+        actions: [
+          PopupMenuButton<String>(
             child: Icon(Icons.more_vert),
             onSelected: (String value) async {
               switch (value) {
                 case 'logout':
                   {
                     SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
+                    await SharedPreferences.getInstance();
                     prefs.setBool('isLoggedIn', false);
-                    // await FirebaseAuth.instance.signOut();
-                    // Navigator.of(context)
-                    //     .push(MaterialPageRoute(builder: (ctx) {
-                    //   return LoginScreen();
-                    // }));
                     FirebaseAuth.instance.signOut().then((value) {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(builder: ((ctx) {
-                        return LoginPage();
-                      })));
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: ((ctx) {
+                            return LoginPage();
+                          })));
                     });
                   }
-
                   break;
                 default:
               }
@@ -74,231 +68,127 @@ class _HomePageState extends State<HomePage> {
                 child: Text('Logout'),
               ),
             ],
-          ),SizedBox(width: 10,)
-          ],
-        ),
-        body: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(
-                  'assets/images/1598244.jpg'), // Replace with your image path
-              fit: BoxFit.cover,
+          ),
+          SizedBox(width: 10),
+        ],
+      ),
+      body: Stack(
+        children: [
+          // Background image of the screen
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/nell.jpg'),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
+          // Black overlay with lower opacity covering the screen background image
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.black.withOpacity(0.3), // Lower opacity
+          ),
+          // Container with background image to embed all buttons
+          Center(
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.8,
+              height: MediaQuery.of(context).size.height * 0.7,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20), // Adjust the value for more or less circular edges
+                image: DecorationImage(
+                  image: AssetImage('assets/images/cover.jpeg'),
+                  fit: BoxFit.cover,
+                  colorFilter: ColorFilter.mode(
+                    Colors.black.withOpacity(0.5),
+                    BlendMode.dstATop,
+                  ),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: buildIconRows(context),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  List<Widget> buildIconRows(BuildContext context) {
+    List<Widget> iconButtons = [];
+    for (int i = 0; i < imagePaths.length; i++) {
+      iconButtons.add(
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child: buildIconButton(context, i),
+        ),
+      );
+    }
+    return [
+      Text(
+        'Services',
+        style: GoogleFonts.roboto(
+          color: Colors.white,
+          fontSize: 20,
+
+        ),
+      ),
+      SizedBox(height: 10), // Add some spacing between heading and buttons
+      Column(
+        children: iconButtons,
+      ),
+    ];
+  }
+
+  Widget buildIconButton(BuildContext context, int index) {
+    return GestureDetector(
+      onTap: () {
+        navigateToPage(context, index);
+      },
+      child: Container(
+        width: 200,
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.7), // Adjust opacity here
+          borderRadius: BorderRadius.circular(60),
+        ),
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                height: 60,
-                width: 300,
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
-                    child: Text(
-                      'Crop Prediction',
-                      style: GoogleFonts.getFont('Didact Gothic',
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24),
-                    ),
-                    onPressed: () async {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CropPredictionHome(),
-                        ),
-                      );
-                    }),
+              Image.asset(
+                imagePaths[index],
+                width: 65,
+                height: 43,
               ),
-              SizedBox(height: 10),
-              Container(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                height: 60,
-                width: 300,
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
+              // Adjust spacing between image and text
+              Text(
+                pageNames[index], // Add text here
+                style: GoogleFonts.notoSansArmenian( // Example of applying Google Fonts
+                  color: Colors.white, // Adjust text color here
+                  fontSize: 12,
+
+
+                  shadows: [
+                    Shadow(
+                      blurRadius: 20.0,
+                      color: Colors.black,
+                      offset: Offset(0, 0),
                     ),
-                    child: Text(
-                      'Weed Identification',
-                      style: GoogleFonts.getFont('Didact Gothic',
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24),
-                    ),
-                    onPressed: () async {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => WeedIdentificationPage(),
-                        ),
-                      );
-                    }),
-              ),
-              SizedBox(height: 10),
-              Container(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                height: 60,
-                width: 300,
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
-                    child: Text(
-                      'Pest Identification',
-                      style: GoogleFonts.getFont('Didact Gothic',
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24),
-                    ),
-                    onPressed: () async {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PestIdentificationPage(),
-                        ),
-                      );
-                    }),
-              ),
-              SizedBox(height: 10),
-              Container(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                height: 60,
-                width: 300,
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
-                    child: Text(
-                      'Cost Estimation',
-                      style: GoogleFonts.getFont('Didact Gothic',
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24),
-                    ),
-                    onPressed: () async {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CostEstimationPage(),
-                        ),
-                      );
-                    }),
-              ),SizedBox(height: 10),
-              Container(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                height: 60,
-                width: 300,
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
-                    child: Text(
-                      'IoT Control',
-                      style: GoogleFonts.getFont('Didact Gothic',
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24),
-                    ),
-                    onPressed: () async {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => IoTControlPage(),
-                        ),
-                      );
-                    }),
+                  ],
+                ),
+
               ),
             ],
           ),
         ),
-        // Stack(
-        //   children: [
-        //     // Background Image with Black Overlay
-        //     Container(
-        //       width: double.infinity,
-        //       height: double.infinity,
-        //       child: Image.asset(
-        //         'assets/images/Farmer.jpg',
-        //         fit: BoxFit.cover,
-        //       ),
-        //     ),
-        //     Container(
-        //       color: Colors.black.withOpacity(0.7), // Adjust opacity as needed
-        //     ),
-        //     Center(
-        //       child: Stack(
-        //         alignment: Alignment.centerRight,
-        //         children: buildCircularIcons(context),
-        //       ),
-        //     ),
-        //       Container(
-        //               padding: EdgeInsets.only(left: 10, right: 10),
-        //               height: 60,
-        //               width: 150,
-        //               child: ElevatedButton(
-        //                   style: ElevatedButton.styleFrom(
-        //                     backgroundColor: Colors.black,
-        //                     shape: RoundedRectangleBorder(
-        //                         borderRadius: BorderRadius.circular(10)),
-        //                   ),
-        //                   child: Text(
-        //                     'Gallery',
-        //                     style: GoogleFonts.getFont('Didact Gothic',
-        //                         color: Colors.white,
-        //                         fontWeight: FontWeight.bold,
-        //                         fontSize: 24),
-        //                   ),
-        //                   onPressed: () async {
-        //                     pickimage_gallery();
-        //                   }),
-        //             ),
-        //   ],
-        // ),
-        );
-  }
-
-  List<Widget> buildCircularIcons(BuildContext context) {
-    final double radius = 150.0; // Adjust this radius as needed
-    final double angleStep = 2 * pi / imagePaths.length;
-    List<Widget> iconWidgets = [];
-
-    for (int i = 0; i < imagePaths.length; i++) {
-      final double x = cos(i * angleStep) * radius;
-      final double y = sin(i * angleStep) * radius;
-
-      iconWidgets.add(
-        Positioned(
-          right: MediaQuery.of(context).size.width / 2 -
-              x -
-              50, // Adjust icon size and positioning
-          top: MediaQuery.of(context).size.height / 2 +
-              y -
-              50, // Adjust icon size and positioning
-          child: GestureDetector(
-            onTap: () {
-              navigateToPage(context, i);
-            },
-            child: buildIcon(imagePaths[i], pageNames[i]),
-          ),
-        ),
-      );
-    }
-
-    return iconWidgets;
+      ),
+    );
   }
 
   void navigateToPage(BuildContext context, int index) {
@@ -307,7 +197,7 @@ class _HomePageState extends State<HomePage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CropPredictionPage(),
+            builder: (context) => CropPredictionHome(),
           ),
         );
         break;
@@ -335,26 +225,14 @@ class _HomePageState extends State<HomePage> {
           ),
         );
         break;
-    }
-  }
-
-  Widget buildIcon(String imagePath, String label) {
-    return Column(
-      children: [
-        Image.asset(
-          imagePath,
-          width: 100,
-          height: 100,
-        ),
-        SizedBox(height: 10),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.white,
+      case 4:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => IoTControlPage(),
           ),
-        ),
-      ],
-    );
+        );
+        break;
+    }
   }
 }

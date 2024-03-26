@@ -52,71 +52,40 @@ class _CropPredictionAutoState extends State<CropPredictionAuto>
     }
   }
 
-  // Future<void> getWeatherData(String latitude, String longitude) async {
-  //   final apiKey = 'c6e2e5fe63e2405592f190738243101';
-  //   final apiUrl =
-  //       'http://api.weatherapi.com/v1/forecast.json?key=$apiKey&q=$latitude,$longitude';
 
-  //   try {
-  //     final response = await http.get(Uri.parse(apiUrl));
+  Future<void> getWeatherData(String latitude, String longitude) async {
+    final apiKey = 'c6e2e5fe63e2405592f190738243101';
+    final apiUrl =
+        'http://api.weatherapi.com/v1/forecast.json?key=$apiKey&q=$latitude,$longitude';
 
-  //     if (response.statusCode == 200) {
-  //       final Map<String, dynamic> data = jsonDecode(response.body);
-  //       final Map<String, dynamic> currentData = data['current'];
-  //       print(currentData);
-  //       print(currentData['temp_c'].runtimeType);
-  //       final String temp = currentData['temp_c'].toString();
-  //       final String hum = currentData['humidity'].toString();
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
 
-  //       print("$temp $hum");
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        final Map<String, dynamic> currentData = data['current'];
+        final String temp = currentData['temp_c'].toString();
+        final String hum = currentData['humidity'].toString();
 
-  //       setState(() {
-  //         temperature = temp;
-  //         humidity = hum;
-  //       });
-  //       // return {'temperature': temperature, 'humidity': humidity};
-  //     } else {
-  //       throw Exception(
-  //           'Failed to load weather data. Status code: ${response.statusCode}');
-  //     }
-  //   } catch (error) {
-  //     throw Exception('Error fetching weather data: $error');
-  //   }
-  // }
+        // Extract dewpoint from the forecast
+        final Map<String, dynamic> forecastData = data['forecast']['forecastday'][0]['hour'][0];
+        final String dewpoint_c = forecastData['dewpoint_c'].toString();
+        final String dewpoint_f = forecastData['dewpoint_f'].toString();
+        print("$temp $hum $dewpoint_c $dewpoint_f");
 
-Future<void> getWeatherData(String latitude, String longitude) async {
-  final apiKey = 'c6e2e5fe63e2405592f190738243101';
-  final apiUrl =
-      'http://api.weatherapi.com/v1/forecast.json?key=$apiKey&q=$latitude,$longitude';
-
-  try {
-    final response = await http.get(Uri.parse(apiUrl));
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = jsonDecode(response.body);
-      final Map<String, dynamic> currentData = data['current'];
-      final String temp = currentData['temp_c'].toString();
-      final String hum = currentData['humidity'].toString();
-      
-      // Extract dewpoint from the forecast
-      final Map<String, dynamic> forecastData = data['forecast']['forecastday'][0]['hour'][0];
-      final String dewpoint_c = forecastData['dewpoint_c'].toString();
-      final String dewpoint_f = forecastData['dewpoint_f'].toString();
-      print("$temp $hum $dewpoint_c $dewpoint_f");
-
-      setState(() {
-        temperature = temp;
-        humidity = hum;
-        dewPoint = dewpoint_c;
-      });
-    } else {
-      throw Exception(
-          'Failed to load weather data. Status code: ${response.statusCode}');
+        setState(() {
+          temperature = temp;
+          humidity = hum;
+          dewPoint = dewpoint_c;
+        });
+      } else {
+        throw Exception(
+            'Failed to load weather data. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      throw Exception('Error fetching weather data: $error');
     }
-  } catch (error) {
-    throw Exception('Error fetching weather data: $error');
   }
-}
 
   Future<CropPrediction?> _predictCrop() async {
     if (!formKey.currentState!.validate()) {
@@ -150,7 +119,7 @@ Future<void> getWeatherData(String latitude, String longitude) async {
     );
 
     if (response.statusCode == 200) {
-       final Map<String, dynamic> data = jsonDecode(response.body);
+      final Map<String, dynamic> data = jsonDecode(response.body);
       print(data);
       return CropPrediction.fromJson(data);
       // Map<String, dynamic> data = jsonDecode(response.body);
@@ -192,8 +161,8 @@ Future<void> getWeatherData(String latitude, String longitude) async {
 
   _getCurrentLocation() {
     Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.best,
-            forceAndroidLocationManager: true)
+        desiredAccuracy: LocationAccuracy.best,
+        forceAndroidLocationManager: true)
         .then((Position position) {
       setState(() {
         _currentPosition = position;
@@ -219,25 +188,8 @@ Future<void> getWeatherData(String latitude, String longitude) async {
         title: Text("Crop Prediction Automatic"),
       ),
       body:
-          // Container(width: double.infinity,
-          //   child: Column(mainAxisAlignment: MainAxisAlignment.center,crossAxisAlignment: CrossAxisAlignment.center,
-          //     children: [
-          //       if (_currentPosition != null)
-          //         Text(
-          //             "LAT: ${_currentPosition!.latitude}, LNG: ${_currentPosition!.longitude}"),
-          //       SizedBox(
-          //         height: 20,
-          //       ),
-          //       ElevatedButton(
-          //         child: Text("Get location"),
-          //         onPressed: () {
-          //           _checkLocationPermission();
-          //         },
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          Form(
+
+      Form(
         key: formKey,
         child: SingleChildScrollView(
           child: Stack(
@@ -301,7 +253,7 @@ Future<void> getWeatherData(String latitude, String longitude) async {
                                   Radius.circular(20),
                                 ),
                                 borderSide:
-                                    BorderSide(width: 1, color: Colors.grey),
+                                BorderSide(width: 1, color: Colors.grey),
                               ),
                             ),
                             keyboardType: TextInputType.number,
@@ -340,7 +292,7 @@ Future<void> getWeatherData(String latitude, String longitude) async {
                                   Radius.circular(20),
                                 ),
                                 borderSide:
-                                    BorderSide(width: 1, color: Colors.grey),
+                                BorderSide(width: 1, color: Colors.grey),
                               ),
                             ),
                             keyboardType: TextInputType.number,
@@ -379,7 +331,7 @@ Future<void> getWeatherData(String latitude, String longitude) async {
                                   Radius.circular(20),
                                 ),
                                 borderSide:
-                                    BorderSide(width: 1, color: Colors.grey),
+                                BorderSide(width: 1, color: Colors.grey),
                               ),
                             ),
                             keyboardType: TextInputType.number,
@@ -412,7 +364,7 @@ Future<void> getWeatherData(String latitude, String longitude) async {
                                   Radius.circular(20),
                                 ),
                                 borderSide:
-                                    BorderSide(width: 1, color: Colors.grey),
+                                BorderSide(width: 1, color: Colors.grey),
                               ),
                             ),
                             validator: (value) {
@@ -440,10 +392,7 @@ Future<void> getWeatherData(String latitude, String longitude) async {
                             decoration: InputDecoration(
                               labelText: 'Rainfall', hintText: '',
                               hintStyle: TextStyle(color: Colors.grey),
-                              // prefixIcon: Icon(
-                              //   Icons.phone,
-                              //   color: Style.grey,
-                              // ),
+
                               enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide(color: Colors.grey),
                                 borderRadius: BorderRadius.circular(20.0),
@@ -459,7 +408,7 @@ Future<void> getWeatherData(String latitude, String longitude) async {
                                   Radius.circular(20),
                                 ),
                                 borderSide:
-                                    BorderSide(width: 1, color: Colors.grey),
+                                BorderSide(width: 1, color: Colors.grey),
                               ),
                             ),
                             keyboardType: TextInputType.number,
@@ -468,17 +417,17 @@ Future<void> getWeatherData(String latitude, String longitude) async {
                         SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: () async {
-                             final prediction = await _predictCrop();
+                            final prediction = await _predictCrop();
                             cropPrediction=prediction!;
                             predictedCrop=prediction.predictedCrop;
                             top5Crops=prediction.top5Crops;
                             setState(() {
-                              
+
                             });
                           },
                           child: Text('Predict'),
                         ),
-                         const SizedBox(
+                        const SizedBox(
                           height: 5,
                         ),
                         if (predictedCrop.isNotEmpty)
@@ -487,11 +436,7 @@ Future<void> getWeatherData(String latitude, String longitude) async {
                             style: TextStyle(fontSize: 20, color: Colors.green),
                           ),
                         const SizedBox(height: 5),
-                        // if (top5Crops.isNotEmpty)
-                        //   Text(
-                        //     "Top 5 Crops: ${top5Crops.join(", ")}",
-                        //     style: TextStyle(fontSize: 20, color: Colors.green),
-                        //   ),
+
                         if (predictedCrop.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(
@@ -502,9 +447,9 @@ Future<void> getWeatherData(String latitude, String longitude) async {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => CropPage(
-                                              predictedCrop: predictedCrop,
-                                              top5crops: top5Crops,cropPrediction: cropPrediction,
-                                            )));
+                                          predictedCrop: predictedCrop,
+                                          top5crops: top5Crops,cropPrediction: cropPrediction,
+                                        )));
                               },
                               child: Container(
                                 height: 60,
@@ -515,12 +460,12 @@ Future<void> getWeatherData(String latitude, String longitude) async {
                                 ),
                                 child: Center(
                                     child: Text(
-                                  'Know more',
-                                  style: GoogleFonts.getFont('Didact Gothic',
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 26),
-                                )),
+                                      'Know more',
+                                      style: GoogleFonts.getFont('Didact Gothic',
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 26),
+                                    )),
                               ),
                             ),
                           ),

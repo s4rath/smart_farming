@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
+
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:geolocator/geolocator.dart';
-import 'dart:math';
+
+
 class IoTControlPage extends StatefulWidget {
   @override
   _IoTControlPageState createState() => _IoTControlPageState();
@@ -81,19 +81,20 @@ class _IoTControlPageState extends State<IoTControlPage>
     _checkLocationPermission();
   }
 
-  void dispose() {
-    _timerController4.dispose();
-    _pauseTimer4?.cancel();
-    _timerController1.dispose();
-    _pauseTimer1?.cancel();
-    _timerController2.dispose();
-    _pauseTimer2?.cancel();
-    _timerController3.dispose();
-    _pauseTimer3?.cancel();
-    WidgetsBinding.instance.removeObserver(this);
-    /// Cancel the timer to avoid memory leaks
-    super.dispose();
-  }
+  // void dispose() {
+  //   _timerController4.dispose();
+  //   _pauseTimer4?.cancel();
+  //   _timerController1.dispose();
+  //   _pauseTimer1?.cancel();
+  //   _timerController2.dispose();
+  //   _pauseTimer2?.cancel();
+  //   _timerController3.dispose();
+  //   _pauseTimer3?.cancel();
+  //   WidgetsBinding.instance.removeObserver(this);
+
+  //   /// Cancel the timer to avoid memory leaks
+  //   super.dispose();
+  // }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -102,6 +103,7 @@ class _IoTControlPageState extends State<IoTControlPage>
       _checkLocationPermission();
     }
   }
+
   Future<void> getWeatherData(String latitude, String longitude) async {
     final apiKey = 'c6e2e5fe63e2405592f190738243101';
     final apiUrl =
@@ -111,7 +113,7 @@ class _IoTControlPageState extends State<IoTControlPage>
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
         final Map<String, dynamic> forecastData =
-        data['forecast']['forecastday'][0]['hour'][0];
+            data['forecast']['forecastday'][0]['hour'][0];
         final String dewpoint_c = forecastData['dewpoint_c'].toString();
         setState(() {
           dewPoint = dewpoint_c;
@@ -119,7 +121,8 @@ class _IoTControlPageState extends State<IoTControlPage>
         });
 
         setState(() {
-          relativeHumidity =  100 - 5 * (double.parse(temperatureValue) - double.parse(dewPoint));
+          relativeHumidity = 100 -
+              5 * (double.parse(temperatureValue) - double.parse(dewPoint));
           Humidity = relativeHumidity.toString();
         });
       } else {
@@ -155,14 +158,16 @@ class _IoTControlPageState extends State<IoTControlPage>
 
   _getCurrentLocation() {
     Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
-        forceAndroidLocationManager: true)
+            desiredAccuracy: LocationAccuracy.best,
+            forceAndroidLocationManager: true)
         .then((Position position) {
-      setState(() {
-        _currentPosition = position;
-        latitude = position.latitude;
-        longitude = position.longitude;
-      });
+      if (mounted) {
+  setState(() {
+    _currentPosition = position;
+    latitude = position.latitude;
+    longitude = position.longitude;
+  });
+}
       getWeatherData(
           latitude!.toStringAsFixed(3), longitude!.toStringAsFixed(3));
       print(
@@ -191,9 +196,11 @@ class _IoTControlPageState extends State<IoTControlPage>
         print('Invalid value received: $value');
       }
     });
-    setState(() {
-      isLoading = false;
-    });
+    if (mounted) {
+  setState(() {
+    isLoading = false;
+  });
+}
   }
 
   void button1Pressed() {
@@ -237,7 +244,7 @@ class _IoTControlPageState extends State<IoTControlPage>
         setState(() {
           _isClimateCheckPaused = false;
           _isUserControl =
-          false; // Reset to false when user-controlled time is over
+              false; // Reset to false when user-controlled time is over
         });
         // Get the latest status of the fan
         getFANStatus();
@@ -249,14 +256,18 @@ class _IoTControlPageState extends State<IoTControlPage>
     // For example, toggle FAN_STATUS immediately when the button is pressed
     if (fanStatus == 0) {
       DBref.child('FAN_STATUS').set(1);
-      setState(() {
-        fanStatus = 1;
-      });
+      if (mounted) {
+  setState(() {
+    fanStatus = 1;
+  });
+}
     } else {
       DBref.child('FAN_STATUS').set(0);
-      setState(() {
-        fanStatus = 0;
-      });
+      if (mounted) {
+  setState(() {
+    fanStatus = 0;
+  });
+}
     }
   }
 
@@ -264,21 +275,25 @@ class _IoTControlPageState extends State<IoTControlPage>
     // Check if the user is not currently controlling the fan manually
     if (!_isUserControl &&
         (double.tryParse(temperatureValue) != null &&
-            double.parse(temperatureValue) > 35.0 ||
+                double.parse(temperatureValue) > 35.0 ||
             double.tryParse(Humidity) != null &&
                 double.parse(Humidity) > 60.0 ||
-            int.tryParse(smokeValue) != null && int.parse(smokeValue) > 150)) {
+            int.tryParse(smokeValue) != null && int.parse(smokeValue) > 150)) {        // +++++++++++++++++++++fan
       // Trigger the fan to ON state
       await DBref.child('FAN_STATUS').set(1);
-      setState(() {
-        fanStatus = 1;
-      });
+      if (mounted) {
+  setState(() {
+    fanStatus = 1;
+  });
+}
     } else {
       if (!_isUserControl) {
         await DBref.child('FAN_STATUS').set(0);
-        setState(() {
-          fanStatus = 0;
-        });
+        if (mounted) {
+  setState(() {
+    fanStatus = 0;
+  });
+}
       } else {
         // Get the latest status of the fan
         getFANStatus();
@@ -304,9 +319,11 @@ class _IoTControlPageState extends State<IoTControlPage>
       }
     });
 
-    setState(() {
-      isLoading1 = false;
-    });
+    if (mounted) {
+  setState(() {
+    isLoading1 = false;
+  });
+}
   }
 
   void _startTimer2() {
@@ -335,14 +352,18 @@ class _IoTControlPageState extends State<IoTControlPage>
     // For example, toggle LED_STATUS immediately when the button is pressed
     if (ledStatus == 0) {
       DBref.child('LED_STATUS').set(1);
-      setState(() {
-        ledStatus = 1;
-      });
+      if (mounted) {
+  setState(() {
+    ledStatus = 1;
+  });
+}
     } else {
       DBref.child('LED_STATUS').set(0);
-      setState(() {
-        ledStatus = 0;
-      });
+      if (mounted) {
+  setState(() {
+    ledStatus = 0;
+  });
+}
     }
   }
 
@@ -384,15 +405,19 @@ class _IoTControlPageState extends State<IoTControlPage>
         int.tryParse(ldrValue) != null &&
         int.parse(ldrValue) < 600) {
       await DBref.child('LED_STATUS').set(1);
-      setState(() {
-        ledStatus = 1;
-      });
+      if (mounted) {
+  setState(() {
+    ledStatus = 1;
+  });
+}
     } else {
       if (!_isLdrCheckPaused) {
         await DBref.child('LED_STATUS').set(0);
-        setState(() {
-          ledStatus = 0;
-        });
+        if (mounted) {
+          setState(() {
+            ledStatus = 0;
+          });
+        }
       } else {
         getLEDStatus();
       }
@@ -469,32 +494,40 @@ class _IoTControlPageState extends State<IoTControlPage>
     // Update PumpStatus and PUMP_STATUS together
     if (PumpStatus == 0) {
       DBref.child('PUMP_STATUS').set(1);
-      setState(() {
-        PumpStatus = 1;
-      });
+      if (mounted) {
+  setState(() {
+    PumpStatus = 1;
+  });
+}
     } else {
       DBref.child('PUMP_STATUS').set(0);
-      setState(() {
-        PumpStatus = 0;
-      });
+      if (mounted) {
+  setState(() {
+    PumpStatus = 0;
+  });
+}
     }
   }
 
   Future<void> _checkSoilValue() async {
     if (!_isSoilCheckPaused &&
         int.tryParse(soilMoistureValue) != null &&
-        int.parse(soilMoistureValue) > 600) {
+        int.parse(soilMoistureValue) > 600) { //+++++++++++++++++++++++ pump
       await DBref.child('PUMP_STATUS').set(1);
 
-      setState(() {
-        PumpStatus = 1;
-      });
+      if (mounted) {
+  setState(() {
+    PumpStatus = 1;
+  });
+}
     } else {
       if (!_isSoilCheckPaused) {
         await DBref.child('PUMP_STATUS').set(0);
-        setState(() {
-          PumpStatus = 0;
-        });
+        if (mounted) {
+  setState(() {
+    PumpStatus = 0;
+  });
+}
       } else {
         getPUMPStatus();
       }
@@ -518,9 +551,11 @@ class _IoTControlPageState extends State<IoTControlPage>
         print('Invalid value received: $value');
       }
     });
-    setState(() {
-      isLoading3 = false;
-    });
+    if (mounted) {
+  setState(() {
+    isLoading3 = false;
+  });
+}
   }
 
   void button4Pressed() {
@@ -565,7 +600,7 @@ class _IoTControlPageState extends State<IoTControlPage>
         setState(() {
           _isEnvironmentCheckPaused = false;
           _isUserControl1 =
-          false; // Reset to false when user-controlled time is over
+              false; // Reset to false when user-controlled time is over
         });
         getWINDOWStatus();
         // Cancel the countdown timer
@@ -576,14 +611,18 @@ class _IoTControlPageState extends State<IoTControlPage>
     // For example, toggle FAN_STATUS immediately when the button is pressed
     if (WindowStatus == 0) {
       DBref.child('WINDOW_STATUS').set(1);
-      setState(() {
-        WindowStatus = 1;
-      });
+      if (mounted) {
+  setState(() {
+    WindowStatus = 1;
+  });
+}
     } else {
       DBref.child('WINDOW_STATUS').set(0);
-      setState(() {
-        WindowStatus = 0;
-      });
+      if (mounted) {
+  setState(() {
+    WindowStatus = 0;
+  });
+}
     }
   }
 
@@ -591,21 +630,26 @@ class _IoTControlPageState extends State<IoTControlPage>
     // Check if the user is not currently controlling the fan manually
     if (!_isUserControl1 &&
         (double.tryParse(temperatureValue) != null &&
-            double.parse(temperatureValue) > 40.0 ||
+                double.parse(temperatureValue) > 40.0 ||
             double.tryParse(Humidity) != null &&
                 double.parse(Humidity) > 60.0 ||
-            int.tryParse(smokeValue) != null && int.parse(smokeValue) > 150)) {
+            int.tryParse(smokeValue) != null && int.parse(smokeValue) > 150)) {  //++++++++++++++++ window
       // Trigger the fan to ON state
       await DBref.child('WINDOW_STATUS').set(1);
-      setState(() {
-        WindowStatus = 1;
-      });
+      if (mounted) {
+  setState(() {
+    WindowStatus = 1;
+  });
+}
     } else {
       if (!_isUserControl1) {
         await DBref.child('WINDOW_STATUS').set(0);
-        setState(() {
-          WindowStatus = 0;
-        });
+        
+        if (mounted) {
+  setState(() {
+    WindowStatus = 0;
+  });
+}
       } else {
         getWINDOWStatus();
       }
@@ -615,15 +659,15 @@ class _IoTControlPageState extends State<IoTControlPage>
   @override
   Widget build(BuildContext context) {
     DatabaseReference ldrReference =
-    FirebaseDatabase.instance.ref().child("Light").child("Ldr_Value");
+        FirebaseDatabase.instance.ref().child("Light").child("Ldr_Value");
     DatabaseReference soilReference =
-    FirebaseDatabase.instance.ref().child("Soil").child("Soil_Moisture");
+        FirebaseDatabase.instance.ref().child("Soil").child("Soil_Moisture");
     DatabaseReference TemperatureReference = FirebaseDatabase.instance
         .ref()
         .child("Temperature")
         .child("Celsius_Value");
     DatabaseReference SmokeReference =
-    FirebaseDatabase.instance.ref().child("Smoke").child("PPM_Value");
+        FirebaseDatabase.instance.ref().child("Smoke").child("PPM_Value");
     DatabaseReference HumidityReference = FirebaseDatabase.instance
         .ref()
         .child("Humidity")
@@ -666,10 +710,13 @@ class _IoTControlPageState extends State<IoTControlPage>
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'IoT Control',
-          style: TextStyle(fontSize: 25, fontStyle: FontStyle.italic),
+          'Greenhouse Control',
+          style: TextStyle(
+            fontSize: 25,
+            color: Colors.white,
+          ),
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.black.withOpacity(1),
       ),
       body: FutureBuilder(
         future: _fApp,
@@ -682,10 +729,15 @@ class _IoTControlPageState extends State<IoTControlPage>
                 // Background Image
                 Positioned.fill(
                   child: Image.asset(
-                    'assets/images/iotback.jpg',
+                    'assets/images/download.jfif',
                     // Replace with your background image path
                     fit: BoxFit.cover,
                   ),
+                ),
+                Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  color: Colors.black.withOpacity(0.1), // Lower opacity
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -705,7 +757,7 @@ class _IoTControlPageState extends State<IoTControlPage>
                                   child: Text(
                                     'Sensor Monitor',
                                     style: TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 18,
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -715,17 +767,17 @@ class _IoTControlPageState extends State<IoTControlPage>
                               SizedBox(height: 5),
                               Row(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceEvenly,
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Light Intensity:  ${ldrValue}nm',
                                           style: TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 12,
                                             color: Colors.white,
                                           ),
                                         ),
@@ -733,7 +785,7 @@ class _IoTControlPageState extends State<IoTControlPage>
                                         Text(
                                           'Soil Moisture: ${soilMoistureValue}ADC',
                                           style: TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 12,
                                             color: Colors.white,
                                           ),
                                         ),
@@ -741,7 +793,7 @@ class _IoTControlPageState extends State<IoTControlPage>
                                         Text(
                                           'Smoke: ${smokeValue}ppm',
                                           style: TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 12,
                                             color: Colors.white,
                                           ),
                                         ),
@@ -751,20 +803,19 @@ class _IoTControlPageState extends State<IoTControlPage>
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Temperature: $temperatureValue°C',
                                           style: TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 12,
                                             color: Colors.white,
                                           ),
                                         ),
-                                        SizedBox(height: 5),
                                         Text(
                                           'Humidity: ${Humidity}%RH',
                                           style: TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 12,
                                             color: Colors.white,
                                           ),
                                         ),

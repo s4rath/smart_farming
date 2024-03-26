@@ -52,37 +52,7 @@ class _CropPredictionAutoState extends State<CropAutomaticClimate>
     }
   }
 
-  // Future<void> getWeatherData(String latitude, String longitude) async {
-  //   final apiKey = 'c6e2e5fe63e2405592f190738243101';
-  //   final apiUrl =
-  //       'http://api.weatherapi.com/v1/forecast.json?key=$apiKey&q=$latitude,$longitude';
 
-  //   try {
-  //     final response = await http.get(Uri.parse(apiUrl));
-
-  //     if (response.statusCode == 200) {
-  //       final Map<String, dynamic> data = jsonDecode(response.body);
-  //       final Map<String, dynamic> currentData = data['current'];
-  //       print(currentData);
-  //       print(currentData['temp_c'].runtimeType);
-  //       final String temp = currentData['temp_c'].toString();
-  //       final String hum = currentData['humidity'].toString();
-
-  //       print("$temp $hum");
-
-  //       setState(() {
-  //         temperature = temp;
-  //         humidity = hum;
-  //       });
-  //       // return {'temperature': temperature, 'humidity': humidity};
-  //     } else {
-  //       throw Exception(
-  //           'Failed to load weather data. Status code: ${response.statusCode}');
-  //     }
-  //   } catch (error) {
-  //     throw Exception('Error fetching weather data: $error');
-  //   }
-  // }
 
 Future<void> getWeatherData(String latitude, String longitude) async {
   final apiKey = 'c6e2e5fe63e2405592f190738243101';

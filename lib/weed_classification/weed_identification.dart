@@ -9,10 +9,11 @@ import 'package:smart_farming/weed_classification/info.dart';
 import 'package:smart_farming/weed_classification/weeddetail.dart';
 
 class WeedIdentificationPage extends StatefulWidget {
-  const WeedIdentificationPage({super.key});
+  const WeedIdentificationPage({Key? key});
 
   @override
-  State<WeedIdentificationPage> createState() => _WeedIdentificationPageState();
+  State<WeedIdentificationPage> createState() =>
+      _WeedIdentificationPageState();
 }
 
 class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
@@ -22,15 +23,11 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
   final imagepicker = ImagePicker();
   int predictedClass = -1;
   double confidence = 0.0;
+
   @override
   void initState() {
     super.initState();
     loading = true;
-    // loadmodel().then((value) {
-    //   print(value);
-    //   print('on the detect page');
-    //   setState(() {});
-    // });
   }
 
   Future<int> predictImage(File imageFile) async {
@@ -56,7 +53,7 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
     }
   }
 
-  pickimage_camera() async {
+  pickImageCamera() async {
     var image = await imagepicker.pickImage(source: ImageSource.camera);
     if (image == null) {
       return null;
@@ -65,14 +62,13 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
       setState(() {});
       _image = File(image.path);
     }
-
     print("here");
     predictedClass = await predictImage(_image);
     print('Predicted class: $predictedClass');
     setState(() {});
   }
 
-  pickimage_gallery() async {
+  pickImageGallery() async {
     var image = await imagepicker.getImage(source: ImageSource.gallery);
     if (image == null) {
       return null;
@@ -82,7 +78,6 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
       _image = File(image.path);
     }
     print("here");
-
     predictedClass = await predictImage(_image);
     print('Predicted class: $predictedClass');
     setState(() {});
@@ -90,260 +85,216 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
 
   @override
   Widget build(BuildContext context) {
-    var h = MediaQuery.of(context).size.height;
-    var w = MediaQuery.of(context).size.width;
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Weed Identification Page'),
-        ),
-        body: Column(
-          children: [
-            SizedBox(
-              height: 90,
-            ),
-            Container(
-                child: Text(
-              'Weed Detector',
-              style: GoogleFonts.getFont('Didact Gothic',
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30),
-            )),
-            SizedBox(
-              height: 20,
-            ),
-            Container(
-              height: 150,
-              width: 150,
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              //color: Colors.black,
-              padding: EdgeInsets.all(10),
-              child: Image.asset('assets/images/weed.png'),
-            ),
-            SizedBox(height: 30),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(left: 10, right: 10),
-                    height: 60,
-                    width: 150,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                        ),
-                        child: Text(
-                          'Capture',
-                          style: GoogleFonts.getFont('Didact Gothic',
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24),
-                        ),
-                        onPressed: () async {
-                          pickimage_camera();
-                        }),
-                  ),
-                  SizedBox(height: 10),
-                  Container(
-                    padding: EdgeInsets.only(left: 10, right: 10),
-                    height: 60,
-                    width: 150,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                        ),
-                        child: Text(
-                          'Gallery',
-                          style: GoogleFonts.getFont('Didact Gothic',
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24),
-                        ),
-                        onPressed: () async {
-                          pickimage_gallery();
-                        }),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                ],
+      appBar: AppBar(
+        title: Text('Weed Identification Page'),
+      ),
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/hay.jpg'),
+                fit: BoxFit.cover,
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
-            loading != true
-                ? Container(
-                    child: Column(
+          ),
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.lightBlue.withOpacity(0.2), // Adjust opacity
+          ),
+          Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width * 0.8,
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height * 0.7,
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(22),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Weed Detector',
+                      style: GoogleFonts.getFont(
+                        'Didact Gothic',
+                        color: Colors.teal.shade50,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 26,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+
+                    Container(
+                      height: 139,// Adjust height as needed
+                      width: 200,
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20), // Adjust the radius for rounded corners
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5), // Use the same radius for clipping
+                        child: Image.asset(
+                          'assets/images/weeder.png',
+                          // Set the width of the image
+                          fit: BoxFit.cover, // Adjust the fit of the image to cover the entire width
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 30),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
-                          height: 200,
-                          width: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Colors.black,
+                        ElevatedButton(
+                          onPressed: () async {
+                            pickImageCamera();
+                          },
+                          child: Text(
+                            'Capture',
+                            style: GoogleFonts.getFont(
+                              'Didact Gothic',
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
-                          // width: double.infinity,
-                          padding: EdgeInsets.all(15),
-                          child: Image.file(
-                            _image,
-                            fit: BoxFit.fitWidth,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal.shade100.withOpacity(0.9),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 9, vertical: 8),
                           ),
                         ),
-                        SizedBox(
-                          height: 10,
+                        SizedBox(width: 20),
+                        ElevatedButton(
+                          onPressed: () async {
+                            pickImageGallery();
+                          },
+                          child: Text(
+                            'Gallery',
+                            style: GoogleFonts.getFont(
+                              'Didact Gothic',
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal.shade100.withOpacity(0.9),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 8),
+                          ),
                         ),
-                        if (predictedClass != -1 && confidence > 0.7)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Classified as : ${details[predictedClass].title} [${confidence.toStringAsFixed(4)}]',
-                                style: GoogleFonts.getFont('Didact Gothic',
-                                    color: Colors.black,
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    loading != true
+                        ? Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 120,
+                            width: double.infinity,
+                            padding: EdgeInsets.all(15),
+                            child: Image.file(
+                              _image,
+                              fit: BoxFit.fitWidth,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          if (predictedClass != -1 &&
+                              confidence > 0.7)
+                            Column(
+                              children: [
+                                Text(
+                                  'Classified as : ${details[predictedClass]
+                                      .title} [${confidence.toStringAsFixed(
+                                      4)}]',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.getFont(
+                                    'Didact Gothic',
+                                    color: Colors.teal.shade50,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 22),
-                              ),
-                            ],
-                          )
-                        else
-                          Text(
-                            confidence == 0.0
-                                ? ""
-                                : "Image cannot be detected",
-                            // _output[0]["label"]!=null?
-                            // 'Image cannot be detected likely to be ${_output[0]["label"]}':"Image cannot be detected",
-                            style: GoogleFonts.getFont('Didact Gothic',
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 22),
-                          ),
-        
-                        if (predictedClass != -1 && confidence > 0.7)
-                          Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 10, left: 20, right: 20),
-                                child: GestureDetector(
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                GestureDetector(
                                   onTap: () {
                                     if (predictedClass != -1) {
                                       Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  Info(predictedClass)));
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              Info(predictedClass),
+                                        ),
+                                      );
                                     }
                                   },
                                   child: Container(
-                                    height: 60,
-                                    width: double.infinity,
+                                    height: 30,
+                                    width: 120,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Colors.black,
+                                      borderRadius:
+                                      BorderRadius.circular(5),
+                                      color: Colors.teal.shade100.withOpacity(0.9),
                                     ),
                                     child: Center(
-                                        child: Text(
-                                      'Know more',
-                                      style: GoogleFonts.getFont(
+                                      child: Text(
+                                        'Know more',
+                                        style: GoogleFonts.getFont(
                                           'Didact Gothic',
-                                          color: Colors.white,
+                                          color: Colors.black,
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 26),
-                                    )),
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
+                              ],
+                            )
+                          else
+                            Text(
+                              confidence == 0.0
+                                  ? ""
+                                  : "Image cannot be detected",
+                              style: GoogleFonts.getFont(
+                                'Didact Gothic',
+                                color: Colors.teal.shade50,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22,
                               ),
-                            ],
-                          )
-                        else
-                          Container(),
-        
-                        // _output.isNotEmpty
-                        //     ? Column(
-                        //         children: [
-                        //           Padding(
-                        //             padding: const EdgeInsets.only(
-                        //                 top: 10, left: 20, right: 20),
-                        //             child: GestureDetector(
-                        //               onTap: () {
-                        //                 if (_output.isNotEmpty) {
-                        //                   Navigator.push(
-                        //                       context,
-                        //                       MaterialPageRoute(
-                        //                           builder: (context) => Info(
-                        //                               _output[0]['index'])));
-                        //                 }
-                        //               },
-                        //               child: Container(
-                        //                 height: 60,
-                        //                 width: double.infinity,
-                        //                 decoration: BoxDecoration(
-                        //                   borderRadius:
-                        //                       BorderRadius.circular(10),
-                        //                   color: Colors.black,
-                        //                 ),
-                        //                 child: Center(
-                        //                     child: Text(
-                        //                   'Know more',
-                        //                   style: GoogleFonts.getFont(
-                        //                       'Didact Gothic',
-                        //                       color: Colors.white,
-                        //                       fontWeight: FontWeight.bold,
-                        //                       fontSize: 26),
-                        //                 )),
-                        //               ),
-                        //             ),
-                        //           ),
-                        //           Padding(
-                        //             padding: const EdgeInsets.only(
-                        //                 left: 20, right: 20, top: 10),
-                        //             child: GestureDetector(
-                        //               onTap: () {
-                        //                 if (_output.isNotEmpty) {
-                        //                   Navigator.of(context).push(
-                        //                       MaterialPageRoute(builder: (ctx) {
-                        //                     return FeeDBack();
-                        //                   }));
-                        //                 }
-                        //               },
-                        //               child: Container(
-                        //                 height: 30,
-                        //                 width: double.infinity,
-                        //                 decoration: BoxDecoration(
-                        //                   borderRadius:
-                        //                       BorderRadius.circular(10),
-                        //                   color: Colors.black,
-                        //                 ),
-                        //                 child: Center(
-                        //                     child: Text(
-                        //                   'Feedback',
-                        //                   style: GoogleFonts.getFont(
-                        //                       'Didact Gothic',
-                        //                       color: Colors.white,
-                        //                       fontWeight: FontWeight.bold,
-                        //                       fontSize: 26),
-                        //                 )),
-                        //               ),
-                        //             ),
-                        //           ),
-                        //         ],
-                        //       )
-        
-                        //     : Container()
-                      ],
-                    ),
-                  )
-                : Container(),
-          ],
-        ));
+                            ),
+                        ],
+                      ),
+                    )
+                        : Container(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
