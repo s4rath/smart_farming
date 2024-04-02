@@ -176,7 +176,7 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.lightGreen.shade100,
+                            backgroundColor: Colors.lightGreen.shade100,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
                             ),
@@ -199,7 +199,7 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.lightGreen.shade100,
+                            backgroundColor: Colors.lightGreen.shade100,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
                             ),

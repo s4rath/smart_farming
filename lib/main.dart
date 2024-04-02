@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_farming/screens/home.dart';
+import 'package:smart_farming/services/firebase_api.dart';
 import 'authentication/registration.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -11,6 +13,8 @@ void main() async {
   await Firebase.initializeApp();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+  await FirebaseMessaging.instance.setAutoInitEnabled(true);
+  await FirebaseApi().initNotification();
   runApp(MyApp(isLoggedIn: isLoggedIn,));
 }
 
@@ -37,6 +41,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
 class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
