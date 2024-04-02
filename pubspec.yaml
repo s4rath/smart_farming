@@ -40,9 +40,12 @@ dependencies:
   http: ^1.2.0
   shared_preferences: ^2.2.2
   image_picker: 
-  tflite_flutter: ^0.10.4
-  flutter_tflite: ^1.0.1
   geolocator: ^10.1.0
+  firebase_core: ^2.25.4
+  firebase_database: ^10.4.5
+  timezone: ^0.9.2
+  intl: ^0.19.0
+  firebase_messaging: ^14.7.21
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +72,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/pest_model/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
