@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_database/firebase_database.dart';
 import '../screens/home.dart';
 
 
@@ -23,29 +24,55 @@ class _LoginPageState extends State<LoginPage> {
 
   final _auth = FirebaseAuth.instance;
   String _loginError = '';
+  final _firebaseMessaging = FirebaseMessaging.instance;
 
-  Future<void> _login() async {
-    try {
-      final email = _emailController.text;
-      final password = _passwordController.text;
-      await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      // Login successful, navigate to the home page or any other desired page.
-      // Replace HomePage with the actual home page class.
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setBool('isLoggedIn', true);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
-    } catch (e) {
-      setState(() {
-        _loginError = 'Invalid email or password. Please try again.';
-      });
+Future<void> _login() async {
+  try {
+    final email = _emailController.text;
+    final password = _passwordController.text;
+    
+    // Perform login
+    final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    
+    // Get the UUID of the logged-in user
+    final String? uuid = userCredential.user?.uid;
+    
+    if (uuid != null) {
+      // Get FCM token
+      final String? fcmToken = await _firebaseMessaging.getToken();
+      
+      if (fcmToken != null) {
+        // Save FCM token to Firebase Realtime Database under fcmToken node
+        await FirebaseDatabase.instance
+            .reference()
+            .child('fcmToken')
+            .child(uuid)
+            .set(fcmToken);
+        
+        print('FCM token saved for user with UUID: $uuid');
+      } else {
+        print('Failed to get FCM token.');
+      }
     }
+
+    // Login successful, navigate to the home page or any other desired page.
+    // Replace HomePage with the actual home page class.
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isLoggedIn', true);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage()),
+    );
+  } catch (e) {
+    setState(() {
+      _loginError = 'Invalid email or password. Please try again.';
+    });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

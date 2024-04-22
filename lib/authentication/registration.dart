@@ -1,16 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
-import 'package:smart_farming/main.dart';
+
 import 'login.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:smart_farming/main.dart';
-import 'login.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 
 class RegistrationPage extends StatefulWidget {
   @override
@@ -32,12 +26,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
         email: email,
         password: password,
       );
-      // Registration successful, navigate to the login page
+
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-            builder: (context) =>
-                LoginPage()), // Replace LoginPage with the actual login page class
+        MaterialPageRoute(builder: (context) => LoginPage()),
       );
     } catch (e) {
       setState(() {
@@ -75,14 +67,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
               borderRadius: BorderRadius.circular(20), // Circular edges
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.7,
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height * 0.7,
+                width: MediaQuery.of(context).size.width * 0.7,
+                height: MediaQuery.of(context).size.height * 0.7,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   image: DecorationImage(
@@ -139,8 +125,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                               left: Radius.circular(15),
                               right: Radius.circular(3),
                             ),
-                            borderSide: BorderSide(
-                                color: Colors.white, width: 2.0),
+                            borderSide:
+                                BorderSide(color: Colors.white, width: 2.0),
                           ),
                         ),
                       ),
@@ -167,8 +153,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                               left: Radius.circular(15),
                               right: Radius.circular(3),
                             ),
-                            borderSide: BorderSide(
-                                color: Colors.white, width: 2.0),
+                            borderSide:
+                                BorderSide(color: Colors.white, width: 2.0),
                           ),
                         ),
                       ),
@@ -176,26 +162,31 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ElevatedButton(
                         onPressed: _register,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.amber.shade100.withOpacity(0.5), // Adjust opacity here
+                          backgroundColor: Colors.amber.shade100
+                              .withOpacity(0.5), // Adjust opacity here
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(17),
                           ),
                           minimumSize: Size(300, 50),
                         ),
-                        child: Text('Register',
+                        child: Text(
+                          'Register',
                           style: TextStyle(
                             color: Colors.white,
-
                           ),
                         ),
                       ),
                       SizedBox(height: 10),
-// Add spacing
-                      Text('Or', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
-                      SizedBox(height: 10), // Add spacing
+
+                      Text('Or',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold)),
+                      SizedBox(height: 10),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.amber.shade100.withOpacity(0.5),
+                          backgroundColor:
+                              Colors.amber.shade100.withOpacity(0.5),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(17),
                           ),
@@ -209,11 +200,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                 builder: (context) => LoginPage()),
                           );
                         },
-                        child: Text('Login', style: TextStyle(
-                          color: Colors.white,
-
+                        child: Text(
+                          'Login',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
                         ),
-                        ),),
+                      ),
 
                       if (_registrationError.isNotEmpty)
                         Text(

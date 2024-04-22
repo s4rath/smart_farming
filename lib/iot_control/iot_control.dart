@@ -4,11 +4,13 @@ import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
 
 
 class IoTControlPage extends StatefulWidget {
@@ -61,7 +63,8 @@ class _IoTControlPageState extends State<IoTControlPage>
   double relativeHumidity = 0.0;
   String dewPoint = '';
   String Humidity = '';
-  Position? _currentPosition;
+  // Position? _currentPosition;
+   LocationData? _location;
   double? latitude;
   double? longitude;
 
@@ -81,20 +84,23 @@ class _IoTControlPageState extends State<IoTControlPage>
     _checkLocationPermission();
   }
 
-  // void dispose() {
-  //   _timerController4.dispose();
-  //   _pauseTimer4?.cancel();
-  //   _timerController1.dispose();
-  //   _pauseTimer1?.cancel();
-  //   _timerController2.dispose();
-  //   _pauseTimer2?.cancel();
-  //   _timerController3.dispose();
-  //   _pauseTimer3?.cancel();
-  //   WidgetsBinding.instance.removeObserver(this);
+  @override
+void dispose() {
+  // Cancel all timers
+  _countdownTimer1.cancel();
+  _countdownTimer2.cancel();
+  _countdownTimer3.cancel();
+  _countdownTimer4.cancel();
+  // Dispose of controllers
+  _timerController1.dispose();
+  _timerController2.dispose();
+  _timerController3.dispose();
+  _timerController4.dispose();
+  // Remove observer
+  WidgetsBinding.instance.removeObserver(this);
+  super.dispose();
+}
 
-  //   /// Cancel the timer to avoid memory leaks
-  //   super.dispose();
-  // }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -137,6 +143,7 @@ class _IoTControlPageState extends State<IoTControlPage>
   Future<void> _checkLocationPermission() async {
     bool serviceEnabled;
     LocationPermission permission;
+     Location location = Location();
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
@@ -156,27 +163,23 @@ class _IoTControlPageState extends State<IoTControlPage>
     _getCurrentLocation();
   }
 
-  _getCurrentLocation() {
-    Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.best,
-            forceAndroidLocationManager: true)
-        .then((Position position) {
-      if (mounted) {
-  setState(() {
-    _currentPosition = position;
-    latitude = position.latitude;
-    longitude = position.longitude;
+  _getCurrentLocation() async {
+    Location location = Location();
+      try {
+      final locationResult = await location.getLocation();
+       setState(() {
+    _location = locationResult;
+    latitude = _location!.latitude;
+    longitude = _location!.longitude;
   });
-}
-      getWeatherData(
+     
+    } on PlatformException catch (err) {
+    print(err);
+    }
+  getWeatherData(
           latitude!.toStringAsFixed(3), longitude!.toStringAsFixed(3));
       print(
           "${latitude!.toStringAsFixed(3)}   ${longitude!.toStringAsFixed(3)}");
-      // getWeatherData(latitude!.toStringAsFixed(3), longitude!.toStringAsFixed(3));
-      // _predictCrop();
-    }).catchError((e) {
-      print(e);
-    });
   }
 
 //Fan Control begins here

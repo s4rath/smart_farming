@@ -72,13 +72,17 @@ class _CostEstimationPageState extends State<CostEstimationPage> {
     );
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body);
+      widgets.clear();
       print(response.body);
       print(data);
       for (var result in data) {
         widgets.add(Text(
           'Year: ${result['Year']}\n'
           'Operational Cost: ${result['OperationalCost']}\n'
-          'Fixed Cost: ${result['FixedCost']}\n',
+          'Fixed Cost: ${result['FixedCost']}\n'
+          'Human Labour: ${result['HumanLabour']}\n'
+          'Machine Labour: ${result['MachineLabour']}\n'
+          'Fertilizer Manure: ${result['FertilizerManure']}\n',
           style: TextStyle(fontSize: 16),
         ));
       }
@@ -183,45 +187,7 @@ class _CostEstimationPageState extends State<CostEstimationPage> {
                                     elevation: 10,
                                   ),
                                 ),
-                                // Padding(
-                                //   padding: const EdgeInsets.all(10.0),
-                                //   child: TextFormField(
-                                //     controller: _cropname,
-                                //     validator: (value) {
-                                //       if (value!.isEmpty) {
-                                //         return "Please Enter a Value";
-                                //       } else {
-                                //         return null;
-                                //       }
-                                //     },
-                                //     decoration: InputDecoration(
-                                //       labelText: 'Crop Name',
-                                //       hintText: '',
-                                //       hintStyle: TextStyle(color: Colors.grey),
-                                //       enabledBorder: OutlineInputBorder(
-                                //         borderSide:
-                                //             BorderSide(color: Colors.grey),
-                                //         borderRadius:
-                                //             BorderRadius.circular(20.0),
-                                //       ),
-                                //       border: new OutlineInputBorder(
-                                //         borderRadius: BorderRadius.all(
-                                //           Radius.circular(20),
-                                //         ),
-                                //         borderSide:
-                                //             new BorderSide(color: Colors.grey),
-                                //       ),
-                                //       focusedBorder: OutlineInputBorder(
-                                //         borderRadius: BorderRadius.all(
-                                //           Radius.circular(20),
-                                //         ),
-                                //         borderSide: BorderSide(
-                                //             width: 1, color: Colors.grey),
-                                //       ),
-                                //     ),
-                                //     // keyboardType: TextInputType.number,
-                                //   ),
-                                // ),
+                               
                                  Padding(
                                   padding: const EdgeInsets.all(10.0),
                                   child: DropdownButtonFormField<String>(
@@ -279,45 +245,7 @@ class _CostEstimationPageState extends State<CostEstimationPage> {
                                     elevation: 10,
                                   ),
                                 ),
-                                // Padding(
-                                //   padding: const EdgeInsets.all(10.0),
-                                //   child: TextFormField(
-                                //     controller: _statename,
-                                //     validator: (value) {
-                                //       if (value!.isEmpty) {
-                                //         return "Please Enter a Value";
-                                //       } else {
-                                //         return null;
-                                //       }
-                                //     },
-                                //     decoration: InputDecoration(
-                                //       labelText: 'State Name',
-                                //       hintText: '',
-                                //       hintStyle: TextStyle(color: Colors.grey),
-                                //       enabledBorder: OutlineInputBorder(
-                                //         borderSide:
-                                //             BorderSide(color: Colors.grey),
-                                //         borderRadius:
-                                //             BorderRadius.circular(20.0),
-                                //       ),
-                                //       border: new OutlineInputBorder(
-                                //         borderRadius: BorderRadius.all(
-                                //           Radius.circular(20),
-                                //         ),
-                                //         borderSide:
-                                //             new BorderSide(color: Colors.grey),
-                                //       ),
-                                //       focusedBorder: OutlineInputBorder(
-                                //         borderRadius: BorderRadius.all(
-                                //           Radius.circular(20),
-                                //         ),
-                                //         borderSide: BorderSide(
-                                //             width: 1, color: Colors.grey),
-                                //       ),
-                                //     ),
-                                //     // keyboardType: TextInputType.number,
-                                //   ),
-                                // ),
+                              
                                 SizedBox(height: 10),
                                 ElevatedButton(
                                   onPressed: costEstimate,

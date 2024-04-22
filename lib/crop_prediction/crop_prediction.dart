@@ -17,8 +17,6 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
   final formKey = GlobalKey<FormState>();
   String url = '';
 
-  // var data;
-  // String output = 'initial';
   String predictedCrop = "";
   List<dynamic> top5Crops = [];
   TextEditingController _nController = TextEditingController();
@@ -36,9 +34,7 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
     }
     final apiUrl = 'http://johnhona1.pythonanywhere.com/predict';
     print(
-        "${_nController.text},${_pController.text},${_kController
-            .text},${_temperatureController.text},${_humidityController
-            .text},${_phController.text},${_rainfallController.text}");
+        "${_nController.text},${_pController.text},${_kController.text},${_temperatureController.text},${_humidityController.text},${_phController.text},${_rainfallController.text}");
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {"Content-Type": "application/json"},
@@ -57,13 +53,6 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
       final Map<String, dynamic> data = jsonDecode(response.body);
       print(data);
       return CropPrediction.fromJson(data);
-      // Map<String, dynamic> data = jsonDecode(response.body);
-      // print(data);
-      // predictedCrop = data['predicted_crop'];
-      // top5Crops = data['top_5_crops'];
-
-      // print("Predicted Crop: $predictedCrop");
-      // print("Top 5 Predicted Crops: $top5Crops");
     } else {
       print('Failed to make prediction. Status code: ${response.statusCode}');
     }
@@ -76,57 +65,71 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const Text('Crop Prediction Page'),
-      ),
+          title: const Text(
+            'Crop Prediction Manual',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Color.fromARGB(255,58,143,188),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.5),
+            ),
+          ),
+          ),
       body: SingleChildScrollView(
         child: Form(
           key: formKey,
-        
           child: Stack(
             alignment: Alignment.center,
             children: <Widget>[
               Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/wp1886339.jpg'),
-                fit: BoxFit.cover,
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/wp1886339.jpg'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
-            ),
-          ),
-          // Black overlay
-          Positioned.fill(
-            child: Container(
-              color: Colors.black.withOpacity(0.5),
-            ),
-          ),
+              // Black overlay
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withOpacity(0.5),
+                ),
+              ),
               Center(
                 child: Container(
-                  alignment: Alignment.topCenter, // Aligns the content to the top center
+                  alignment: Alignment
+                      .topCenter, // Aligns the content to the top center
                   width: MediaQuery.of(context).size.width * 0.8,
-                  height: MediaQuery.of(context).size.height * 0.7,
+                  height: MediaQuery.of(context).size.height * 0.6,
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(22),
                   ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center, // Centers the text horizontally
-                    mainAxisAlignment: MainAxisAlignment.start, // Aligns the text to the top
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       // Heading
                       Padding(
-                        padding: const EdgeInsets.only(top:5), // Add some top padding
+                        padding: const EdgeInsets.only(
+                            top: 5), // Add some top padding
                         child: Text(
                           'Crop Prediction by Manual Recognition', // Add the heading text here
-                          textAlign: TextAlign.center, // Aligns the text horizontally within the container
+                          textAlign: TextAlign
+                              .center, // Aligns the text horizontally within the container
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 17.5, // Adjust the font size as needed
-                             // Adjust the font weight as needed
+                            // Adjust the font weight as needed
                           ),
                         ),
-                      ),SizedBox(height: 10,),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
                       Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Container(
@@ -138,6 +141,12 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                               if (value!.isEmpty) {
                                 return "Please Enter a Value";
                               } else {
+                                double nitrogenValue = double.parse(value);
+                                if (nitrogenValue != null &&
+                                    (nitrogenValue < 0 ||
+                                        nitrogenValue > 140)) {
+                                  return "Value must be between 0 and 140";
+                                }
                                 return null;
                               }
                             },
@@ -145,8 +154,8 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                             decoration: InputDecoration(
                               labelText: 'Nitrogen',
                               hintText: '',
-                              hintStyle: TextStyle(
-                                  color: Colors.white, fontSize: 10),
+                              hintStyle:
+                                  TextStyle(color: Colors.white, fontSize: 10),
                               enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide(color: Colors.white),
                                 borderRadius: BorderRadius.circular(6.0),
@@ -155,15 +164,14 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(6),
                                 ),
-                                borderSide:
-                                new BorderSide(color: Colors.grey),
+                                borderSide: new BorderSide(color: Colors.green),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(6),
                                 ),
                                 borderSide:
-                                BorderSide(width: 1, color: Colors.grey),
+                                    BorderSide(width: 1, color: Colors.green),
                               ),
                               labelStyle: TextStyle(color: Colors.white),
                               contentPadding: EdgeInsets.symmetric(
@@ -184,6 +192,12 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                               if (value!.isEmpty) {
                                 return "Please Enter a Value";
                               } else {
+                                double phosphorusValue = double.parse(value);
+                                if (phosphorusValue != null &&
+                                    (phosphorusValue < 0 ||
+                                        phosphorusValue > 145)) {
+                                  return "Value must be between 0 and 145";
+                                }
                                 return null;
                               }
                             },
@@ -191,12 +205,8 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                             decoration: InputDecoration(
                               labelText: 'Phosphorous',
                               hintText: '',
-                              hintStyle: TextStyle(
-                                  color: Colors.white, fontSize: 10),
-                              // prefixIcon: Icon(
-                              //   Icons.phone,
-                              //   color: Style.grey,
-                              // ),
+                              hintStyle:
+                                  TextStyle(color: Colors.white, fontSize: 10),
                               enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide(color: Colors.white),
                                 borderRadius: BorderRadius.circular(6.0),
@@ -205,15 +215,14 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(6),
                                 ),
-                                borderSide:
-                                new BorderSide(color: Colors.grey),
+                                borderSide: new BorderSide(color: Colors.green),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(6),
                                 ),
                                 borderSide:
-                                BorderSide(width: 1, color: Colors.grey),
+                                    BorderSide(width: 1, color: Colors.green),
                               ),
                               labelStyle: TextStyle(color: Colors.white),
                               contentPadding: EdgeInsets.symmetric(
@@ -234,6 +243,12 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                               if (value!.isEmpty) {
                                 return "Please Enter a Value";
                               } else {
+                                double potassiumValue = double.parse(value);
+                                if (potassiumValue != null &&
+                                    (potassiumValue < 0 ||
+                                        potassiumValue > 205)) {
+                                  return "Value must be between 0 and 205";
+                                }
                                 return null;
                               }
                             },
@@ -241,12 +256,8 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                             decoration: InputDecoration(
                               labelText: 'Potassium',
                               hintText: '',
-                              hintStyle: TextStyle(
-                                  color: Colors.white, fontSize: 10),
-                              // prefixIcon: Icon(
-                              //   Icons.phone,
-                              //   color: Style.grey,
-                              // ),
+                              hintStyle:
+                                  TextStyle(color: Colors.white, fontSize: 10),
                               enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide(color: Colors.white),
                                 borderRadius: BorderRadius.circular(6.0),
@@ -255,21 +266,19 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(6),
                                 ),
-                                borderSide:
-                                new BorderSide(color: Colors.grey),
+                                borderSide: new BorderSide(color: Colors.green),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(6),
                                 ),
                                 borderSide:
-                                BorderSide(width: 1, color: Colors.grey),
+                                    BorderSide(width: 1, color: Colors.green),
                               ),
                               labelStyle: TextStyle(color: Colors.white),
                               contentPadding: EdgeInsets.symmetric(
                                   vertical: 5.0, horizontal: 10),
                             ),
-        
                             keyboardType: TextInputType.number,
                           ),
                         ),
@@ -285,6 +294,11 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                               if (value!.isEmpty) {
                                 return "Please Enter a Value";
                               } else {
+                                double temperatureValue = double.parse(value);
+                                if (temperatureValue != null &&
+                                    temperatureValue >= 50) {
+                                  return "Enter valid temperature in celsius";
+                                }
                                 return null;
                               }
                             },
@@ -292,12 +306,8 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                             decoration: InputDecoration(
                               labelText: 'Temperature',
                               hintText: '',
-                              hintStyle: TextStyle(
-                                  color: Colors.white, fontSize: 10),
-                              // prefixIcon: Icon(
-                              //   Icons.phone,
-                              //   color: Style.grey,
-                              // ),
+                              hintStyle:
+                                  TextStyle(color: Colors.white, fontSize: 10),
                               enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide(color: Colors.white),
                                 borderRadius: BorderRadius.circular(6.0),
@@ -306,21 +316,19 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(6),
                                 ),
-                                borderSide:
-                                new BorderSide(color: Colors.green),
+                                borderSide: new BorderSide(color: Colors.green),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(6),
                                 ),
                                 borderSide:
-                                BorderSide(width: 1, color: Colors.green),
+                                    BorderSide(width: 1, color: Colors.green),
                               ),
                               labelStyle: TextStyle(color: Colors.white),
                               contentPadding: EdgeInsets.symmetric(
                                   vertical: 5.0, horizontal: 10),
                             ),
-        
                             keyboardType: TextInputType.number,
                           ),
                         ),
@@ -336,6 +344,12 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                               if (value!.isEmpty) {
                                 return "Please Enter a Value";
                               } else {
+                                double humidityValue = double.parse(value);
+                                if (humidityValue != null &&
+                                    (humidityValue < 14 ||
+                                        humidityValue > 99)) {
+                                  return "Humidity must be between 14 and 99";
+                                }
                                 return null;
                               }
                             },
@@ -343,12 +357,8 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                             decoration: InputDecoration(
                               labelText: 'Humidity',
                               hintText: '',
-                              hintStyle: TextStyle(
-                                  color: Colors.white, fontSize: 10),
-                              // prefixIcon: Icon(
-                              //   Icons.phone,
-                              //   color: Style.grey,
-                              // ),
+                              hintStyle:
+                                  TextStyle(color: Colors.white, fontSize: 10),
                               enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide(color: Colors.white),
                                 borderRadius: BorderRadius.circular(6.0),
@@ -357,15 +367,14 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(6),
                                 ),
-                                borderSide:
-                                new BorderSide(color: Colors.green),
+                                borderSide: new BorderSide(color: Colors.green),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(6),
                                 ),
                                 borderSide:
-                                BorderSide(width: 1, color: Colors.green),
+                                    BorderSide(width: 1, color: Colors.green),
                               ),
                               labelStyle: TextStyle(color: Colors.white),
                               contentPadding: EdgeInsets.symmetric(
@@ -386,12 +395,8 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                             decoration: InputDecoration(
                               labelText: 'pH',
                               hintText: '',
-                              hintStyle: TextStyle(
-                                  color: Colors.white, fontSize: 10),
-                              // prefixIcon: Icon(
-                              //   Icons.phone,
-                              //   color: Style.grey,
-                              // ),
+                              hintStyle:
+                                  TextStyle(color: Colors.white, fontSize: 10),
                               enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide(color: Colors.white),
                                 borderRadius: BorderRadius.circular(6.0),
@@ -400,25 +405,28 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(6),
                                 ),
-                                borderSide:
-                                new BorderSide(color: Colors.green),
+                                borderSide: new BorderSide(color: Colors.green),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(6),
                                 ),
                                 borderSide:
-                                BorderSide(width: 1, color: Colors.green),
+                                    BorderSide(width: 1, color: Colors.green),
                               ),
                               labelStyle: TextStyle(color: Colors.white),
                               contentPadding: EdgeInsets.symmetric(
                                   vertical: 5.0, horizontal: 10.0),
-        
                             ),
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return "Please Enter a Value";
                               } else {
+                                double phValue = double.parse(value);
+                                if (phValue != null &&
+                                    (phValue < 1 || phValue > 14)) {
+                                  return "pH must be between 1 and 14";
+                                }
                                 return null;
                               }
                             },
@@ -437,6 +445,12 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                               if (value!.isEmpty) {
                                 return "Please Enter a Value";
                               } else {
+                                double rainfallValue = double.parse(value);
+                                if (rainfallValue != null &&
+                                    (rainfallValue < 20 ||
+                                        rainfallValue > 300)) {
+                                  return "Rainfall must be between 20 and 300";
+                                }
                                 return null;
                               }
                             },
@@ -444,12 +458,8 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                             decoration: InputDecoration(
                               labelText: 'Rainfall',
                               hintText: '',
-                              hintStyle: TextStyle(
-                                  color: Colors.white, fontSize: 10),
-                              // prefixIcon: Icon(
-                              //   Icons.phone,
-                              //   color: Style.grey,
-                              // ),
+                              hintStyle:
+                                  TextStyle(color: Colors.white, fontSize: 10),
                               enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide(color: Colors.white),
                                 borderRadius: BorderRadius.circular(6.0),
@@ -458,15 +468,14 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(6),
                                 ),
-                                borderSide:
-                                new BorderSide(color: Colors.green),
+                                borderSide: new BorderSide(color: Colors.green),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(6),
                                 ),
                                 borderSide:
-                                BorderSide(width: 1, color: Colors.green),
+                                    BorderSide(width: 1, color: Colors.green),
                               ),
                               labelStyle: TextStyle(color: Colors.white),
                               contentPadding: EdgeInsets.symmetric(
@@ -486,8 +495,8 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                           setState(() {});
                         },
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 2, horizontal: 50),
+                          padding:
+                              EdgeInsets.symmetric(vertical: 2, horizontal: 50),
                           // Adjust padding as needed
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -504,8 +513,7 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
-        
-        
+
                       const SizedBox(
                         height: 3,
                       ),
@@ -514,23 +522,16 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                           "Predicted Crop: $predictedCrop",
                           style: TextStyle(fontSize: 12, color: Colors.white),
                         ),
-        
-                      // if (top5Crops.isNotEmpty)
-                      //   Text(
-                      //     "Top 5 Crops: ${top5Crops.join(", ")}",
-                      //     style: TextStyle(fontSize: 20, color: Colors.green),
-                      //   ),
                       if (predictedCrop.isNotEmpty)
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 3, left: 5, right: 5),
+                          padding:
+                              const EdgeInsets.only(top: 3, left: 5, right: 5),
                           child: GestureDetector(
                             onTap: () {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          CropPage(
+                                      builder: (context) => CropPage(
                                             predictedCrop: predictedCrop,
                                             top5crops: top5Crops,
                                             cropPrediction: cropPrediction,
@@ -539,15 +540,14 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                             child: Container(
                               height: 26.7,
                               width: double.infinity,
-        
                               child: Center(
                                   child: Text(
-                                    'Tap to Know more',
-                                    style: GoogleFonts.getFont('Didact Gothic',
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12),
-                                  )),
+                                'Tap to Know more',
+                                style: GoogleFonts.getFont('Didact Gothic',
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12),
+                              )),
                             ),
                           ),
                         ),

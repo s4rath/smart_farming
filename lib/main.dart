@@ -1,12 +1,15 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_farming/screens/home.dart';
-import 'package:smart_farming/services/firebase_api.dart';
+
 import 'authentication/registration.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'news_letter/news_details_provider.dart';
+import 'news_letter/topnews_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,8 +17,18 @@ void main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
   await FirebaseMessaging.instance.setAutoInitEnabled(true);
-  await FirebaseApi().initNotification();
-  runApp(MyApp(isLoggedIn: isLoggedIn,));
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => NewsDetailProvider()),
+        ChangeNotifierProvider(create: (_) => TopNewsProvider())
+      ],
+      child: MyApp(
+        isLoggedIn: isLoggedIn,
+      ),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -27,8 +40,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -36,8 +47,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: widget.isLoggedIn ? HomePage() : WelcomePage()
-      ,
+      home: widget.isLoggedIn ? HomePage() : WelcomePage(),
     );
   }
 }
@@ -48,15 +58,14 @@ class WelcomePage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Background Image
           Image.asset(
-            'assets/images/photo.jpg', // Replace with your background image path
+            'assets/images/photo.jpg',
             fit: BoxFit.cover,
             width: double.infinity,
             height: double.infinity,
           ),
           Container(
-            color: Colors.black.withOpacity(0.5), // Black overlay with opacity
+            color: Colors.black.withOpacity(0.5),
             width: double.infinity,
             height: double.infinity,
           ),
@@ -65,7 +74,6 @@ class WelcomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Large Heading
                 Text(
                   'FarmAlly',
                   style: GoogleFonts.monoton(
@@ -85,8 +93,8 @@ class WelcomePage extends StatelessWidget {
                 SizedBox(height: 20), // Add vertical spacing
                 Text(
                   "From Seed to Success with a Single Tap\n"
-                      "You don't need to adhere us Formally\n"
-                      "All you need is FarmAlly 🌿",
+                  "You don't need to adhere us Formally\n"
+                  "All you need is FarmAlly 🌿",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.oswald(
                     textStyle: TextStyle(
@@ -95,23 +103,19 @@ class WelcomePage extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 100), // Add vertical spacing
-                // Row to align logo image button horizontally
-                // Replace the GestureDetector with the following code
-                // Add vertical spacing
+                SizedBox(height: 100),
+
                 GestureDetector(
                   onTap: () {
-                    // Handle button tap action here
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => RegistrationPage(),
                       ),
                     );
                   },
-
                   child: Column(
                     children: [
-                      SizedBox(height: 40), // Add vertical spacing
+                      SizedBox(height: 40),
                       Stack(
                         alignment: Alignment.center,
                         children: [
@@ -129,7 +133,8 @@ class WelcomePage extends StatelessWidget {
                             ),
                           ),
                           Positioned(
-                            bottom: 110, // Add small vertical spacing between the image and the text
+                            bottom:
+                                110, // Add small vertical spacing between the image and the text
                             child: Text(
                               'Tap to Dive!',
                               style: GoogleFonts.cinzel(

@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_farming/crop_prediction/crop_predictHome.dart';
 import 'package:smart_farming/iot_control/iot_control.dart';
 import 'package:smart_farming/authentication/login.dart';
+import 'package:smart_farming/news_letter/news_home.dart';
 import '../cost_estimation/cost_estimation.dart';
 import '../pest_classification/pest_identification.dart';
 import '../weed_classification/weed_identification.dart';
@@ -23,6 +24,7 @@ class _HomePageState extends State<HomePage> {
     'assets/images/pesticon.png',
     'assets/images/cost.png',
     'assets/images/iot-modified.png',
+    'assets/images/phone-sc.jpg',
   ];
 
   final List<String> pageNames = [
@@ -30,7 +32,8 @@ class _HomePageState extends State<HomePage> {
     'Weed Identification',
     'Pest Identification',
     'Cost Estimation',
-    'Greenhouse Control'
+    'Greenhouse Control',
+    'News Letter'
   ];
   @override
   Widget build(BuildContext context) {
@@ -59,10 +62,7 @@ class _HomePageState extends State<HomePage> {
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              PopupMenuItem<String>(
-                value: 'points',
-                child: Text('Points'),
-              ),
+             
               PopupMenuItem<String>(
                 value: 'logout',
                 child: Text('Logout'),
@@ -230,6 +230,14 @@ class _HomePageState extends State<HomePage> {
           context,
           MaterialPageRoute(
             builder: (context) => IoTControlPage(),
+          ),
+        );
+        break;
+        case 5:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => NewsHomePage(),
           ),
         );
         break;
