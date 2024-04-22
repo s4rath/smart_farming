@@ -40,9 +40,15 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home Page'),
+        backgroundColor: Color.fromARGB(255,213,159,100),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.5),
+            ),
+          ),
         actions: [
           PopupMenuButton<String>(
-            child: Icon(Icons.more_vert),
+            child: Icon(Icons.more_vert,color: Colors.black,),
             onSelected: (String value) async {
               switch (value) {
                 case 'logout':
