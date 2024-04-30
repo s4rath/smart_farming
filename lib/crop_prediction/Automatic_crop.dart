@@ -38,6 +38,7 @@ class _CropPredictionAutoState extends State<CropPredictionAuto>
   String stateName = '';
   double rainfall = 0;
   late CropPrediction cropPrediction;
+
   @override
   void initState() {
     super.initState();
@@ -75,7 +76,7 @@ class _CropPredictionAutoState extends State<CropPredictionAuto>
 
         // Extract dewpoint from the forecast
         final Map<String, dynamic> forecastData =
-            data['forecast']['forecastday'][0]['hour'][0];
+        data['forecast']['forecastday'][0]['hour'][0];
         final String dewpoint_c = forecastData['dewpoint_c'].toString();
         final String dewpoint_f = forecastData['dewpoint_f'].toString();
         print("$temp $hum $dewpoint_c $dewpoint_f");
@@ -225,7 +226,7 @@ class _CropPredictionAutoState extends State<CropPredictionAuto>
     // Request payload
     final Map<String, dynamic> payload = {
       'district':
-          districtName.toUpperCase(), // Convert district name to uppercase
+      districtName.toUpperCase(), // Convert district name to uppercase
     };
 
     try {
@@ -257,7 +258,6 @@ class _CropPredictionAutoState extends State<CropPredictionAuto>
     }
   }
 
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -277,12 +277,17 @@ class _CropPredictionAutoState extends State<CropPredictionAuto>
         key: formKey,
         child: SingleChildScrollView(
           child: Stack(
-            alignment: Alignment.center,
+            alignment: Alignment.topCenter,
             children: [
               Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                // color: Colors.blue.shade800,
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height,
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width,
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage('assets/images/wp1886339.jpg'),
@@ -296,362 +301,404 @@ class _CropPredictionAutoState extends State<CropPredictionAuto>
                 ),
               ),
               Center(
-                child: Container(
-                  alignment: Alignment.topCenter,
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  height: MediaQuery.of(context).size.height * 0.5,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(22),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 20, right: 8, left: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 5), // Add some top padding
-                          child: Text(
-                            'Crop Prediction by Soil Conditions', // Add the heading text here
-                            textAlign: TextAlign
-                                .center, // Aligns the text horizontally within the container
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 17.5, // Adjust the font size as needed
-                              // Adjust the font weight as needed
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Container(
-                            width: 200,
-                            height: 35,
-                            child: TextFormField(
-                              controller: _nController,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return "Please Enter a Value";
-                                } else {
-                                  double nitrogenValue = double.parse(value);
-                                  if (nitrogenValue != null &&
-                                      (nitrogenValue < 0 ||
-                                          nitrogenValue > 140)) {
-                                    return "Value between 0 and 140";
-                                  }
-                                  return null;
-                                }
-                              },
-                              decoration: InputDecoration(
-                                labelText: 'Nitrogen',
-                                hintText: '',
-                                hintStyle: TextStyle(
-                                    color: Colors.white, fontSize: 10),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                  borderRadius: BorderRadius.circular(6.0),
-                                ),
-                                border: new OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(6),
-                                  ),
-                                  borderSide:
-                                      new BorderSide(color: Colors.green),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(6),
-                                  ),
-                                  borderSide:
-                                      BorderSide(width: 1, color: Colors.green),
-                                ),
-                                labelStyle: TextStyle(color: Colors.white),
-                                contentPadding: EdgeInsets.symmetric(
-                                    vertical: 5.0, horizontal: 10),
-                              ),
-                              keyboardType: TextInputType.number,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Container(
-                            width: 200,
-                            height: 35,
-                            child: TextFormField(
-                              controller: _pController,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return "Please Enter a Value";
-                                } else {
-                                  double phosphorusValue = double.parse(value);
-                                  if (phosphorusValue != null &&
-                                      (phosphorusValue < 0 ||
-                                          phosphorusValue > 145)) {
-                                    return "Value between 0 and 145";
-                                  }
-                                  return null;
-                                }
-                              },
-                              decoration: InputDecoration(
-                                labelText: 'Phosphorous',
-                                hintText: '',
-                                hintStyle: TextStyle(
-                                    color: Colors.white, fontSize: 10),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                  borderRadius: BorderRadius.circular(6.0),
-                                ),
-                                border: new OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(6),
-                                  ),
-                                  borderSide:
-                                      new BorderSide(color: Colors.green),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(6),
-                                  ),
-                                  borderSide:
-                                      BorderSide(width: 1, color: Colors.green),
-                                ),
-                                labelStyle: TextStyle(color: Colors.white),
-                                contentPadding: EdgeInsets.symmetric(
-                                    vertical: 5.0, horizontal: 10),
-                              ),
-                              keyboardType: TextInputType.number,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Container(
-                            width: 200,
-                            height: 35,
-                            child: TextFormField(
-                              controller: _kController,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return "Please Enter a Value";
-                                } else {
-                                  double potassiumValue = double.parse(value);
-                                  if (potassiumValue != null &&
-                                      (potassiumValue < 0 ||
-                                          potassiumValue > 205)) {
-                                    return "Value between 0 and 205";
-                                  }
-                                  return null;
-                                }
-                              },
-                              decoration: InputDecoration(
-                                labelText: 'Potassium',
-                                hintText: '',
-                                hintStyle: TextStyle(
-                                    color: Colors.white, fontSize: 10),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                  borderRadius: BorderRadius.circular(6.0),
-                                ),
-                                border: new OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(6),
-                                  ),
-                                  borderSide:
-                                      new BorderSide(color: Colors.green),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(6),
-                                  ),
-                                  borderSide:
-                                      BorderSide(width: 1, color: Colors.green),
-                                ),
-                                labelStyle: TextStyle(color: Colors.white),
-                                contentPadding: EdgeInsets.symmetric(
-                                    vertical: 5.0, horizontal: 10),
-                              ),
-                              keyboardType: TextInputType.number,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Container(
-                            width: 200,
-                            height: 35,
-                            child: TextFormField(
-                              controller: _phController,
-                              decoration: InputDecoration(
-                                labelText: 'pH',
-                                hintText: '',
-                                hintStyle: TextStyle(
-                                    color: Colors.white, fontSize: 10),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                  borderRadius: BorderRadius.circular(6.0),
-                                ),
-                                border: new OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(6),
-                                  ),
-                                  borderSide:
-                                      new BorderSide(color: Colors.green),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(6),
-                                  ),
-                                  borderSide:
-                                      BorderSide(width: 1, color: Colors.green),
-                                ),
-                                labelStyle: TextStyle(color: Colors.white),
-                                contentPadding: EdgeInsets.symmetric(
-                                    vertical: 5.0, horizontal: 10.0),
-                              ),
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return "Please Enter a Value";
-                                } else {
-                                  double phValue = double.parse(value);
-                                  if (phValue != null &&
-                                      (phValue < 1 || phValue > 14)) {
-                                    return "pH must be between 1 and 14";
-                                  }
-                                  return null;
-                                }
-                              },
-                              // decoration: InputDecoration(),
-                              keyboardType: TextInputType.number,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Container(
-                            width: 200,
-                            height: 35,
-                            child: TextFormField(
-                              controller: _rainfallController,
-                              style: TextStyle(color: Colors.black),
-                              enabled: false,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return "Please Enter a Value";
-                                }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                disabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                  borderRadius: BorderRadius.circular(6.0),
-                                ),
-                                labelText: 'Rainfall',
-                                hintText: '',
-                                hintStyle: TextStyle(
-                                    color: Colors.white, fontSize: 10),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                  borderRadius: BorderRadius.circular(6.0),
-                                ),
-                                border: new OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(6),
-                                  ),
-                                  borderSide:
-                                      new BorderSide(color: Colors.green),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(6),
-                                  ),
-                                  borderSide:
-                                      BorderSide(width: 1, color: Colors.green),
-                                ),
-                                labelStyle: TextStyle(color: Colors.white),
-                                contentPadding: EdgeInsets.symmetric(
-                                    vertical: 5.0, horizontal: 10),
-                              ),
-                              keyboardType: TextInputType.number,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: () async {
-                            final prediction = await _predictCrop();
-                            cropPrediction = prediction!;
-                            predictedCrop = prediction.predictedCrop;
-                            top5Crops = prediction.top5Crops;
-                            setState(() {});
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 2, horizontal: 50),
-                            // Adjust padding as needed
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            backgroundColor: Colors.green,
-                            // Background color
-                            textStyle: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            ), // Text style
-                          ),
-                          child: Text(
-                            'Predict',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        if (predictedCrop.isNotEmpty)
-                          Text(
-                            "Predicted Crop: $predictedCrop",
-                            style: TextStyle(fontSize: 20, color: Colors.green),
-                          ),
-                        const SizedBox(height: 5),
-                        if (predictedCrop.isNotEmpty)
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 60.0),
+                  // Add padding to the top
+                  child: Container(
+                    alignment: Alignment.topCenter,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width * 0.8,
+                    height: MediaQuery
+                        .of(context)
+                        .size
+                        .height * 0.7,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(22),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 0.1),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
                           Padding(
                             padding: const EdgeInsets.only(
-                                top: 10, left: 20, right: 20, bottom: 10),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => CropPage(
-                                              predictedCrop: predictedCrop,
-                                              top5crops: top5Crops,
-                                              cropPrediction: cropPrediction,
-                                            )));
-                              },
-                              child: Container(
-                                height: 60,
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.black,
-                                ),
-                                child: Center(
-                                    child: Text(
-                                  'Know more',
-                                  style: GoogleFonts.getFont('Didact Gothic',
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 26),
-                                )),
+                              top: 0.1,
+                            ),
+                            child: Text(
+                              'Crop Prediction by \n Soil Conditions',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 17.5,
                               ),
                             ),
                           ),
-                      ],
+                          Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Container(
+                              width: 200,
+                              height: 35,
+                              child: TextFormField(
+                                controller: _nController,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return "Please Enter a Value";
+                                  } else {
+                                    double nitrogenValue = double.parse(value);
+                                    if (nitrogenValue != null &&
+                                        (nitrogenValue < 0 ||
+                                            nitrogenValue > 140)) {
+                                      return "Value between 0 and 140";
+                                    }
+                                    return null;
+                                  }
+                                },
+                                style: TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  labelText: 'Nitrogen',
+                                  hintText: '',
+                                  hintStyle: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                    borderRadius: BorderRadius.circular(6.0),
+                                  ),
+                                  border: new OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(6),
+                                    ),
+                                    borderSide: new BorderSide(
+                                        color: Colors.green),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(6),
+                                    ),
+                                    borderSide:
+                                    BorderSide(width: 1, color: Colors.green),
+                                  ),
+                                  labelStyle: TextStyle(color: Colors.white),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 5.0, horizontal: 10),
+                                ),
+                                keyboardType: TextInputType.number,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Container(
+                              width: 200,
+                              height: 35,
+                              child: TextFormField(
+                                controller: _pController,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return "Please Enter a Value";
+                                  } else {
+                                    double phosphorusValue = double.parse(
+                                        value);
+                                    if (phosphorusValue != null &&
+                                        (phosphorusValue < 0 ||
+                                            phosphorusValue > 145)) {
+                                      return "Value between 0 and 145";
+                                    }
+                                    return null;
+                                  }
+                                },
+                                style: TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  labelText: 'Phosphorous',
+                                  hintText: '',
+                                  hintStyle: TextStyle(
+                                      color: Colors.white, fontSize: 20),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                    borderRadius: BorderRadius.circular(6.0),
+                                  ),
+                                  border: new OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(6),
+                                    ),
+                                    borderSide:
+                                    new BorderSide(color: Colors.green),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(6),
+                                    ),
+                                    borderSide:
+                                    BorderSide(width: 1, color: Colors.green),
+                                  ),
+                                  labelStyle: TextStyle(color: Colors.white),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 5.0, horizontal: 10),
+                                ),
+                                keyboardType: TextInputType.number,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Container(
+                              width: 200,
+                              height: 35,
+                              child: TextFormField(
+                                controller: _kController,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return "Please Enter a Value";
+                                  } else {
+                                    double potassiumValue = double.parse(value);
+                                    if (potassiumValue != null &&
+                                        (potassiumValue < 0 ||
+                                            potassiumValue > 205)) {
+                                      return "Value between 0 and 205";
+                                    }
+                                    return null;
+                                  }
+                                },
+                                style: TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  labelText: 'Potassium',
+                                  hintText: '',
+                                  hintStyle: TextStyle(
+                                      color: Colors.white, fontSize: 10),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                    borderRadius: BorderRadius.circular(6.0),
+                                  ),
+                                  border: new OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(6),
+                                    ),
+                                    borderSide:
+                                    new BorderSide(color: Colors.green),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(6),
+                                    ),
+                                    borderSide:
+                                    BorderSide(width: 1, color: Colors.green),
+                                  ),
+                                  labelStyle: TextStyle(color: Colors.white),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 5.0, horizontal: 10),
+                                ),
+                                keyboardType: TextInputType.number,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Container(
+                              width: 200,
+                              height: 35,
+                              child: TextFormField(
+                                controller: _phController,
+                                style: TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  labelText: 'pH',
+                                  hintText: '',
+                                  hintStyle: TextStyle(
+                                      color: Colors.white, fontSize: 10),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                    borderRadius: BorderRadius.circular(6.0),
+                                  ),
+                                  border: new OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(6),
+                                    ),
+                                    borderSide:
+                                    new BorderSide(color: Colors.green),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(6),
+                                    ),
+                                    borderSide:
+                                    BorderSide(width: 1, color: Colors.green),
+                                  ),
+                                  labelStyle: TextStyle(color: Colors.white),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 5.0, horizontal: 10.0),
+                                ),
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return "Please Enter a Value";
+                                  } else {
+                                    double phValue = double.parse(value);
+                                    if (phValue != null &&
+                                        (phValue < 1 || phValue > 14)) {
+                                      return "pH must be between 1 and 14";
+                                    }
+                                    return null;
+                                  }
+                                },
+                                // decoration: InputDecoration(),
+                                keyboardType: TextInputType.number,
+                              ),
+                            ),
+                          ),
+                          // Encapsulate fetched climate values inside another container
+                          // Encapsulate fetched climate values inside another container
+                          Container(
+
+
+                            alignment: Alignment.topCenter,// Add padding
+                            child: Column(
+
+                              children: [
+                                Text(
+                                  'Climate Data',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+
+                                  ),
+                                ),
+                                SizedBox(height: 2),
+                                if (temperature.isEmpty ||
+                                    humidity.isEmpty ||
+                                    _rainfallController.text.isEmpty)
+                                  Text(
+                                    'Please Wait..Fetching Values...', // Show fetching message
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                  )
+                                else
+                                  Column(
+
+                                    children: [
+                                      // Display Temperature
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 0.0), // Add left padding
+                                        child: Text(
+                                          'Temperature: $temperature°C', // Use the temperature value here
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                      // Display Humidity
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 0.0), // Add left padding
+                                        child: Text(
+                                          'Humidity: $humidity%', // Use the humidity value here
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                      // Display Rainfall
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 0.0), // Add left padding
+                                        child: Text(
+                                          'Rainfall: ${_rainfallController.text} mm', // Use the rainfall value here
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                              ],
+                            ),
+                          ),
+
+                          ElevatedButton(
+                            onPressed: () async {
+                              final prediction = await _predictCrop();
+                              cropPrediction = prediction!;
+                              predictedCrop = prediction.predictedCrop;
+                              setState(() {});
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 2,
+                                horizontal: 50,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              backgroundColor: Colors.green,
+                              textStyle: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
+                            ),
+                            child: Text(
+                              'Predict',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+
+                          SizedBox(height: 5),
+
+                          if (predictedCrop.isNotEmpty)
+                            Text(
+                              "Predicted Crop: $predictedCrop",
+                              style: TextStyle(fontSize: 15, color: Colors.white),
+                            ),
+
+
+
+                          if (predictedCrop.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                top: 2,
+                                left: 20,
+                                right: 20,
+                                bottom: 10,
+                              ),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CropPage(
+                predictedCrop: predictedCrop,
+                top5crops: top5Crops,
+                cropPrediction: cropPrediction,
+              ),
+            ),
+          );
+        },
+        child: Container(
+          height: 26,
+          width: 143,
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.2), // Button background color
+            borderRadius: BorderRadius.circular(8), // Optional: Button border radius
+          ),
+          child: Center(
+            child: Text(
+              'Know more',
+              style: GoogleFonts.getFont(
+                'Didact Gothic',
+                color: Colors.white, // Button text color
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+              ),
+            ),
+          ),
+        ),
+      ),
+                            ),
+      ],
+                      ),
                     ),
                   ),
                 ),

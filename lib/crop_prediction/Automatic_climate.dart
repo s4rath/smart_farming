@@ -33,6 +33,7 @@ class _CropPredictionAutoState extends State<CropAutomaticClimate>
   String stateName = '';
   double rainfall = 0;
   bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -68,7 +69,7 @@ class _CropPredictionAutoState extends State<CropAutomaticClimate>
         final String temp = currentData['temp_c'].toString();
         final String hum = currentData['humidity'].toString();
         final Map<String, dynamic> forecastData =
-            data['forecast']['forecastday'][0]['hour'][0];
+        data['forecast']['forecastday'][0]['hour'][0];
         final String dewpoint_c = forecastData['dewpoint_c'].toString();
         final String dewpoint_f = forecastData['dewpoint_f'].toString();
         print("$temp $hum $dewpoint_c $dewpoint_f");
@@ -239,7 +240,6 @@ class _CropPredictionAutoState extends State<CropAutomaticClimate>
       return null;
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -249,6 +249,7 @@ class _CropPredictionAutoState extends State<CropAutomaticClimate>
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Color.fromARGB(255, 58, 143, 188),
+
         flexibleSpace: Container(
           decoration: BoxDecoration(
             color: Colors.black.withOpacity(0.5),
@@ -259,7 +260,7 @@ class _CropPredictionAutoState extends State<CropAutomaticClimate>
         key: formKey,
         child: SingleChildScrollView(
           child: Stack(
-            alignment: Alignment.center,
+            alignment: Alignment.topCenter,
             children: [
               Container(
                 height: MediaQuery.of(context).size.height,
@@ -276,169 +277,165 @@ class _CropPredictionAutoState extends State<CropAutomaticClimate>
                   color: Colors.black.withOpacity(0.5),
                 ),
               ),
-              Center(
-                child: isLoading
-                    ? CircularProgressIndicator()
-                    : Container(
-                        alignment: Alignment.topCenter,
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        height: MediaQuery.of(context).size.height * 0.25,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(22),
+              Padding(
+                padding: const EdgeInsets.only(top: 60),
+                child: Center(
+                  child: isLoading
+                      ? CircularProgressIndicator()
+                      : Container(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    height: MediaQuery.of(context).size.height * 0.7,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(22),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: Text(
+                            'Crop Prediction by \n  Climate Factors',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
+                          ),
                         ),
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.only(top: 20, right: 8, left: 8),
+                        SizedBox(height: 10),
+                        Container(
+                          width:double.infinity,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/OIP (1).jpg'),
+                              fit: BoxFit.cover,
+                              colorFilter: ColorFilter.mode(
+                                Colors.black.withOpacity(0.1),
+                                BlendMode.dstATop,
+                              ),
+                            ),
+
+                          ),
+                          padding: EdgeInsets.all(20),
                           child: Column(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 5),
+                              Container(
+                                width: 200,
+                                padding: EdgeInsets.all(10),
                                 child: Text(
-                                  'Crop Prediction by Climatic Conditions',
-                                  textAlign: TextAlign.center,
+                                  'Rainfall: ${_rainfallController.text} mm',
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 17.5,
+                                    fontSize: 18,
                                   ),
                                 ),
                               ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Container(
-                                  width: 200,
-                                  height: 35,
-                                  child: TextFormField(
-                                    controller: _rainfallController,
-                                    style: TextStyle(color: Colors.black),
-                                    enabled: false,
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return "Please Enter a Value";
-                                      }
-                                      return null;
-                                    },
-                                    decoration: InputDecoration(
-                                      disabledBorder: OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.white),
-                                        borderRadius:
-                                            BorderRadius.circular(6.0),
-                                      ),
-                                      labelText: 'Rainfall',
-                                      hintText: '',
-                                      hintStyle: TextStyle(
-                                          color: Colors.white, fontSize: 10),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.white),
-                                        borderRadius:
-                                            BorderRadius.circular(6.0),
-                                      ),
-                                      border: new OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(6),
-                                        ),
-                                        borderSide:
-                                            new BorderSide(color: Colors.green),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(6),
-                                        ),
-                                        borderSide: BorderSide(
-                                            width: 1, color: Colors.green),
-                                      ),
-                                      labelStyle:
-                                          TextStyle(color: Colors.white),
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 5.0, horizontal: 10),
-                                    ),
-                                    keyboardType: TextInputType.number,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 20),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 2, horizontal: 50),
-                                  // Adjust padding as needed
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  backgroundColor: Colors.green,
-                                  // Background color
-                                  textStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                  ), // Text style
-                                ),
-                                onPressed: () async {
-                                  final prediction = await _predictCrop();
-                                  cropPrediction = prediction!;
-                                  predictedCrop = prediction.predictedCrop;
-                                  top5Crops = prediction.top5Crops;
-                                  setState(() {});
-                                },
+                              SizedBox(height: 30),
+                              Container(
+                                width: 200,
+                                padding: EdgeInsets.all(10),
                                 child: Text(
-                                  'Predict',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              if (predictedCrop.isNotEmpty)
-                                Text(
-                                  "Predicted Crop: $predictedCrop",
+                                  'Temperature: $temperature°C',
                                   style: TextStyle(
-                                      fontSize: 20, color: Colors.green),
-                                ),
-                              const SizedBox(height: 5),
-                              if (predictedCrop.isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10, left: 20, right: 20, bottom: 10),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => CropPage(
-                                                    predictedCrop:
-                                                        predictedCrop,
-                                                    top5crops: top5Crops,
-                                                    cropPrediction:
-                                                        cropPrediction,
-                                                  )));
-                                    },
-                                    child: Container(
-                                      height: 60,
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: Colors.black,
-                                      ),
-                                      child: Center(
-                                          child: Text(
-                                        'Know more',
-                                        style: GoogleFonts.getFont(
-                                            'Didact Gothic',
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 26),
-                                      )),
-                                    ),
+                                    color: Colors.white,
+                                    fontSize: 18,
                                   ),
                                 ),
+                              ),
+                              SizedBox(height: 30),
+                              Container(
+                                width: 200,
+                                padding: EdgeInsets.all(10),
+                                child: Text(
+                                  'Humidity: $humidity%',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 30),
+                              // Other widgets...
                             ],
                           ),
                         ),
-                      ),
+                        SizedBox(height: 30),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 9, horizontal: 40),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            backgroundColor: Colors.green.withOpacity(0.75),
+                          ),
+                          onPressed: () async {
+                            final prediction = await _predictCrop();
+                            cropPrediction = prediction!;
+                            predictedCrop = prediction.predictedCrop;
+                            top5Crops = prediction.top5Crops;
+                            setState(() {});
+                          },
+                          child: Text(
+                            'Predict',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 19,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        if (predictedCrop.isNotEmpty)
+                          Text(
+                            "Predicted Crop: $predictedCrop",
+                            style: TextStyle(
+                              fontSize: 17,
+                              color: Colors.white,
+                            ),
+                          ),
+                        const SizedBox(height: 12),
+                        if (predictedCrop.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CropPage(
+                                      predictedCrop: predictedCrop,
+                                      top5crops: top5Crops,
+                                      cropPrediction: cropPrediction,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                height: 26,
+                                width: 200,
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'Know more',
+                                    style: TextStyle(
+                                      color: Colors.white,
+
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ],
           ),

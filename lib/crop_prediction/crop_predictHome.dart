@@ -5,156 +5,6 @@ import 'package:smart_farming/crop_prediction/Automatic_crop.dart';
 import 'package:smart_farming/crop_prediction/crop_prediction.dart';
 import 'package:smart_farming/screens/locationtest.dart';
 
-// class CropPredictionHome extends StatefulWidget {
-//   const CropPredictionHome({super.key});
-
-//   @override
-//   State<CropPredictionHome> createState() => _CropPredictionHomeState();
-// }
-
-// class _CropPredictionHomeState extends State<CropPredictionHome> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text("Crop Prediction Home")),
-//       body: Container(
-//         width: double.infinity,
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           crossAxisAlignment: CrossAxisAlignment.center,
-//           children: [
-//             Container(
-//               padding: EdgeInsets.only(left: 10, right: 10),
-//               height: 60,
-//               width: 300,
-//               child: ElevatedButton(
-//                   style: ElevatedButton.styleFrom(
-//                     backgroundColor: Colors.black,
-//                     shape: RoundedRectangleBorder(
-//                         borderRadius: BorderRadius.circular(10)),
-//                   ),
-//                   child: Text(
-//                     'Crop Prediction Manual',
-//                     style: GoogleFonts.getFont('Didact Gothic',
-//                         color: Colors.white,
-//                         fontWeight: FontWeight.bold,
-//                         fontSize: 24),
-//                   ),
-//                   onPressed: () async {
-//                     Navigator.push(
-//                       context,
-//                       MaterialPageRoute(
-//                         builder: (context) => CropPredictionPage(),
-//                       ),
-//                     );
-//                   }),
-//             ),
-//             SizedBox(
-//               height: 20,
-//             ),
-//             Container(
-//               padding: EdgeInsets.only(left: 10, right: 10),
-//               height: 60,
-//               width: 300,
-//               child: Stack(
-//                 children: [
-//                   Container(
-//                     // padding: EdgeInsets.only(left: 10, right: 10),
-//                     height: 60,
-//                     width: 300,
-//                     child: ElevatedButton(
-//                         style: ElevatedButton.styleFrom(
-//                           backgroundColor: Colors.black,
-//                           shape: RoundedRectangleBorder(
-//                               borderRadius: BorderRadius.circular(10)),
-//                         ),
-//                         child: Text(
-//                           'Crop Prediction Automatic',
-//                           style: GoogleFonts.getFont('Didact Gothic',
-//                               color: Colors.white,
-//                               fontWeight: FontWeight.bold,
-//                               fontSize: 24),
-//                         ),
-//                         onPressed: () async {
-//                           Navigator.push(
-//                             context,
-//                             MaterialPageRoute(
-//                               builder: (context) => CropPredictionAuto(),
-//                             ),
-//                           );
-//                         }),
-//                   ),
-//                   Positioned(
-//                     bottom: 5, right: 20,
-//                     // left: 30,
-//                     child: Text(
-//                       'By soil conditions',
-//                       style: TextStyle(
-//                         color: Colors.white,
-//                         fontSize: 12,
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             SizedBox(
-//               height: 20,
-//             ),
-//             Container(
-//               padding: EdgeInsets.only(left: 10, right: 10),
-//               height: 60,
-//               width: 300,
-//               child: Stack(
-//                 children: [
-//                   Container(
-//                     // padding: EdgeInsets.only(left: 10, right: 10),
-//                     height: 60,
-//                     width: 300,
-//                     child: ElevatedButton(
-//                         style: ElevatedButton.styleFrom(
-//                           backgroundColor: Colors.black,
-//                           shape: RoundedRectangleBorder(
-//                               borderRadius: BorderRadius.circular(10)),
-//                         ),
-//                         child: Text(
-//                           'Crop Prediction Automatic',
-//                           style: GoogleFonts.getFont('Didact Gothic',
-//                               color: Colors.white,
-//                               fontWeight: FontWeight.bold,
-//                               fontSize: 24),
-//                         ),
-//                         onPressed: () async {
-//                           Navigator.push(
-//                             context,
-//                             MaterialPageRoute(
-//                               builder: (context) => CropAutomaticClimate(),
-//                             ),
-//                           );
-//                         }),
-//                   ),
-//                   Positioned(
-//                     bottom: 5, right: 20,
-//                     // left: 30,
-//                     child: Text(
-//                       'By climatic conditions',
-//                       style: TextStyle(
-//                         color: Colors.white,
-//                         fontSize: 12,
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             // ElevatedButton(onPressed: (){Navigator.of(context).push(MaterialPageRoute(builder: (context){return LocationTest();}));}, child: Text("location test"))
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 class CropPredictionHome extends StatefulWidget {
   const CropPredictionHome({Key? key}) : super(key: key);
 
@@ -167,78 +17,127 @@ class _CropPredictionHomeState extends State<CropPredictionHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Crop Prediction Home"),
-        backgroundColor: Color.fromARGB(255, 221, 220, 218),
+        title: Text("Crop Prediction Home",style: TextStyle(color: Colors.white)),
+        backgroundColor: Color.fromARGB(255, 58, 143, 188),
+
         flexibleSpace: Container(
           decoration: BoxDecoration(
             color: Colors.black.withOpacity(0.5),
           ),
         ),
       ),
-      body: Stack(children: [
-        Positioned.fill(
-          child: Image.asset(
-            'assets/images/cover.jpeg',
-            fit: BoxFit.cover,
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/wp1886339.jpg',
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        Container(
-          width: double.infinity,
-          height: double.infinity,
-          color: Colors.black.withOpacity(0.1),
-        ),
-        Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GridButton(
-                    buttonText: 'Crop Prediction Manual',
-                    onPressed: () async {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CropPredictionPage(),
-                        ),
-                      );
-                    },
-                  ),
-                  GridButton(
-                    buttonText: 'Crop Prediction Automatic (Soil)',
-                    onPressed: () async {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CropPredictionAuto(),
-                        ),
-                      );
-                    },
-                    additionalText: 'By soil conditions',
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              GridButton(
-                buttonText: 'Crop Prediction Automatic (Climate)',
-                onPressed: () async {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CropAutomaticClimate(),
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.black.withOpacity(0.5), // Black overlay
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: EdgeInsets.only(top: 60),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: MediaQuery.of(context).size.height * 0.7,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Dashboard',
+                      style: GoogleFonts.getFont(
+                        'Didact Gothic',
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                      ),
                     ),
-                  );
-                },
-                additionalText: 'By climatic conditions',
+                    SizedBox(height: 10),
+                    GridButton(
+                      buttonText: ' Manual Crop Prediction',
+                      onPressed: () async {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CropPredictionPage(),
+                          ),
+                        );
+                      },
+                      imagePath: 'assets/images/manual-modified.png',
+                    ),
+                    SizedBox(height: 10),
+                    GridButton(
+                      buttonText: 'Automated Crop Prediction (Soil)',
+                      onPressed: () async {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CropPredictionAuto(),
+                          ),
+                        );
+                      },
+                      imagePath: 'assets/images/soil.png',
+                    ),
+                    SizedBox(height: 10),
+                    GridButton(
+                      buttonText: 'Automated Crop Prediction (Climate)',
+                      onPressed: () async {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CropAutomaticClimate(),
+                          ),
+                        );
+                      },
+                      imagePath: 'assets/images/auto-modified.png',
+                    ),
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
-        ),
-      ]),
+          Positioned(
+            bottom: 20,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  text: 'Warning: ',
+                  style: TextStyle(
+                    color: Colors.red, // Set color of 'Warning' to red
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  children: [
+                    TextSpan(
+                      text:
+                      '\n Automated mode uses general area data \n & may differ from your specific farm area',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -247,59 +146,59 @@ class GridButton extends StatelessWidget {
   final String buttonText;
   final VoidCallback onPressed;
   final String? additionalText;
+  final String imagePath;
 
   const GridButton({
     required this.buttonText,
     required this.onPressed,
     this.additionalText,
+    required this.imagePath,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: Color.fromARGB(255, 31, 29, 29).withOpacity(0.4),
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      margin: EdgeInsets.all(3),
-      width: 190,
-      height: 200,
-      child: InkWell(
-        onTap: onPressed,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/images/1598244.jpg',
-              width: 100,
-              height: 100,
-              fit: BoxFit.contain,
-            ),
-            SizedBox(height: 10),
-            Column(
-              children: [
+      margin: EdgeInsets.symmetric(horizontal: 20),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.4),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        width: 150,
+        height: 150,
+        child: InkWell(
+          onTap: onPressed,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                imagePath,
+                width: 100,
+                height: 80,
+                fit: BoxFit.contain,
+              ),
+              SizedBox(height: 10),
+              Text(
+                buttonText,
+                style: GoogleFonts.getFont(
+                  'Didact Gothic',
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              if (additionalText != null)
                 Text(
-                  buttonText,
-                  style: GoogleFonts.getFont(
-                    'Didact Gothic',
+                  additionalText!,
+                  style: TextStyle(
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22,
+                    fontSize: 10,
                   ),
                   textAlign: TextAlign.center,
                 ),
-                if (additionalText != null)
-                  Text(
-                    additionalText!,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

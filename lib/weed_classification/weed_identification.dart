@@ -18,6 +18,7 @@ class WeedIdentificationPage extends StatefulWidget {
 
 class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
   bool loading = false;
+  bool _waiting = false;
   late File _image;
   List _output = [];
   final imagepicker = ImagePicker();
@@ -31,6 +32,7 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
   }
 
   Future<int> predictImage(File imageFile) async {
+    _waiting=true;
     var request = http.MultipartRequest(
         'POST', Uri.parse("http://johnhona1.pythonanywhere.com/weed"));
     request.headers['content-type'] = 'multipart/form-data';
@@ -65,6 +67,7 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
     print("here");
     predictedClass = await predictImage(_image);
     print('Predicted class: $predictedClass');
+     _waiting=false;
     setState(() {});
   }
 
@@ -80,21 +83,29 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
     print("here");
     predictedClass = await predictImage(_image);
     print('Predicted class: $predictedClass');
+     _waiting=false;
     setState(() {});
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Weed Identification Page'),
-      ),
+        appBar: AppBar(
+        title: Text('Weed Identification Page',style: TextStyle(color: Colors.white)),
+    backgroundColor: Colors.green.shade900,
+    flexibleSpace: Container(
+    decoration: BoxDecoration(
+    color: Colors.black.withOpacity(0.5),
+    ),
+    ),
+        ),
       body: Stack(
         children: [
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/hay.jpg'),
+                image: AssetImage('assets/images/OIPed.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -102,7 +113,7 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
           Container(
             width: double.infinity,
             height: double.infinity,
-            color: Colors.lightBlue.withOpacity(0.2), // Adjust opacity
+            color: Colors.black12.withOpacity(0.5), // Adjust opacity
           ),
           Center(
             child: ClipRRect(
@@ -118,7 +129,7 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
                     .size
                     .height * 0.7,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black12.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(22),
                 ),
                 child: Column(
@@ -129,7 +140,7 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
                       'Weed Detector',
                       style: GoogleFonts.getFont(
                         'Didact Gothic',
-                        color: Colors.teal.shade50,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 26,
                       ),
@@ -138,7 +149,7 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
 
                     Container(
                       height: 139,// Adjust height as needed
-                      width: 200,
+
                       padding: EdgeInsets.all(20),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20), // Adjust the radius for rounded corners
@@ -165,13 +176,13 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
                             'Capture',
                             style: GoogleFonts.getFont(
                               'Didact Gothic',
-                              color: Colors.black,
+                              color: Colors.green.shade900,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal.shade100.withOpacity(0.9),
+                            backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -188,13 +199,13 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
                             'Gallery',
                             style: GoogleFonts.getFont(
                               'Didact Gothic',
-                              color: Colors.black,
+                              color: Colors.green.shade900,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal.shade100.withOpacity(0.9),
+                            backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -219,9 +230,11 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
                               fit: BoxFit.fitWidth,
                             ),
                           ),
+                      
                           SizedBox(height: 10),
+                           if(_waiting!=true)
                           if (predictedClass != -1 &&
-                              confidence > 0.7)
+                              confidence > 0.85)
                             Column(
                               children: [
                                 Text(
@@ -255,14 +268,14 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
                                     decoration: BoxDecoration(
                                       borderRadius:
                                       BorderRadius.circular(5),
-                                      color: Colors.teal.shade100.withOpacity(0.9),
+                                      color: Colors.white.withOpacity(0.9),
                                     ),
                                     child: Center(
                                       child: Text(
                                         'Know more',
                                         style: GoogleFonts.getFont(
                                           'Didact Gothic',
-                                          color: Colors.black,
+                                          color: Colors.green.shade900,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 15,
                                         ),
@@ -281,9 +294,11 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
                                 'Didact Gothic',
                                 color: Colors.teal.shade50,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 22,
+                                fontSize: 12,
                               ),
-                            ),
+                            )
+                            else 
+                            CircularProgressIndicator()
                         ],
                       ),
                     )

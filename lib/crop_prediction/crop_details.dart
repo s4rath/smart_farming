@@ -21,7 +21,17 @@ class CropPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Crop Page"),
+        title: Text(
+          "Crop Details",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Color.fromARGB(255, 58, 143, 188),
+
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.5),
+          ),
+        ),
       ),
       body: Center(
         child: Container(

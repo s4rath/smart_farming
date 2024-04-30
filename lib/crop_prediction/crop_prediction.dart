@@ -65,22 +65,26 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-          title: const Text(
-            'Crop Prediction Manual',
-            style: TextStyle(color: Colors.white),
+        title: const Text(
+          'Crop Prediction Manual',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Color.fromARGB(255, 58, 143, 188),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.5),
           ),
-          backgroundColor: Color.fromARGB(255,58,143,188),
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.5),
-            ),
-          ),
-          ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Form(
+
+
+
+
           key: formKey,
           child: Stack(
-            alignment: Alignment.center,
+            alignment: Alignment.topCenter,
             children: <Widget>[
               Container(
                 height: MediaQuery.of(context).size.height,
@@ -98,40 +102,35 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                   color: Colors.black.withOpacity(0.5),
                 ),
               ),
-              Center(
+              Padding(
+                padding: const EdgeInsets.only(top: 60.0), // Add padding to the top
                 child: Container(
-                  alignment: Alignment
-                      .topCenter, // Aligns the content to the top center
+                  alignment: Alignment.topCenter,
                   width: MediaQuery.of(context).size.width * 0.8,
-                  height: MediaQuery.of(context).size.height * 0.6,
+                  height: MediaQuery.of(context).size.height * 0.7,
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(22),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       // Heading
                       Padding(
                         padding: const EdgeInsets.only(
-                            top: 5), // Add some top padding
+                          top: 0.1,
+                        ),
                         child: Text(
-                          'Crop Prediction by Manual Recognition', // Add the heading text here
-                          textAlign: TextAlign
-                              .center, // Aligns the text horizontally within the container
+                          'Crop Prediction by Manual Recognition',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 17.5, // Adjust the font size as needed
-                            // Adjust the font weight as needed
+                            fontSize: 17.5,
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
                       Padding(
-                        padding: const EdgeInsets.all(5.0),
+                        padding: const EdgeInsets.all(10.0),
                         child: Container(
                           width: 200,
                           height: 35,
@@ -447,9 +446,9 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                               } else {
                                 double rainfallValue = double.parse(value);
                                 if (rainfallValue != null &&
-                                    (rainfallValue < 20 ||
-                                        rainfallValue > 300)) {
-                                  return "Rainfall must be between 20 and 300";
+                                    (rainfallValue < 0 ||
+                                        rainfallValue > 400)) {
+                                  return "Rainfall must be greater than 0 and less than 400 ";
                                 }
                                 return null;
                               }
@@ -538,19 +537,29 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                                           )));
                             },
                             child: Container(
-                              height: 26.7,
-                              width: double.infinity,
+                              height: 15,
+                              width: 143,
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.2), // Button background color
+                                borderRadius: BorderRadius.circular(8), // Optional: Button border radius
+                              ),
                               child: Center(
-                                  child: Text(
-                                'Tap to Know more',
-                                style: GoogleFonts.getFont('Didact Gothic',
-                                    color: Colors.white,
+                                child: Text(
+                                  'Know more',
+                                  style: GoogleFonts.getFont(
+                                    'Didact Gothic',
+                                    color: Colors.white, // Button text color
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 12),
-                              )),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
+                      const SizedBox(
+                        height: 1.8,
+                      ),
                     ],
                   ),
                 ),

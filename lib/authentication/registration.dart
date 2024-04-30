@@ -46,7 +46,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       ),
       body: Stack(
         children: [
-          // Background image of the screen
+          
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -56,15 +56,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ),
             ),
           ),
-          // Black overlay with lower opacity covering the screen background image
+          
           Container(
             width: double.infinity,
             height: double.infinity,
-            color: Colors.black.withOpacity(0.5), // Lower opacity
+            color: Colors.black.withOpacity(0.5), 
           ),
           Center(
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(20), // Circular edges
+              borderRadius: BorderRadius.circular(20), 
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 width: MediaQuery.of(context).size.width * 0.7,
@@ -76,7 +76,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     fit: BoxFit.cover,
                     colorFilter: ColorFilter.mode(
                       Colors.black.withOpacity(0.3),
-                      // Overlay color with opacity
+                     
                       BlendMode.dstATop,
                     ),
                   ),

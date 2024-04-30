@@ -342,7 +342,7 @@ class _CostEstimationPageState extends State<CostEstimationPage> {
                                       return null;
                                     },
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: Colors.black,
                                     ),
                                     icon: Icon(
                                       Icons.arrow_drop_down,

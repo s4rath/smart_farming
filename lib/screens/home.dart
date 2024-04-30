@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
     'assets/images/pesticon.png',
     'assets/images/cost.png',
     'assets/images/iot-modified.png',
-    'assets/images/phone-sc.jpg',
+    'assets/images/news-modified.png',
   ];
 
   final List<String> pageNames = [
@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(6.2),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: buildIconRows(context),
@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
 
         ),
       ),
-      SizedBox(height: 10), // Add some spacing between heading and buttons
+      SizedBox(height: 5), // Add some spacing between heading and buttons
       Column(
         children: iconButtons,
       ),

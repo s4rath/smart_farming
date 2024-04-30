@@ -22,6 +22,7 @@ class InfoState extends State<Info> {
 
   InfoState(this.i);
 
+
   @override
   Widget build(BuildContext context) {
     double containerWidth = MediaQuery.of(context).size.width * 0.8; // 80% of the screen width
@@ -39,7 +40,7 @@ class InfoState extends State<Info> {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/hay.jpg'),
+                image: AssetImage('assets/images/OIPed.jpg'),
                 fit: BoxFit.cover,
               ),
             ),

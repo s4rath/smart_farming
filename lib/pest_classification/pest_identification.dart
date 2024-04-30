@@ -18,23 +18,21 @@ class PestIdentificationPage extends StatefulWidget {
 class _PestIdentificationPageState extends State<PestIdentificationPage> {
   bool loading = false;
   late File _image;
-  List _output = [];
+  // List _output = [];
   final imagepicker = ImagePicker();
   int predictedClass = -1;
   double confidence = 0.0;
+  bool _waiting = false;
 
   @override
   void initState() {
     super.initState();
     loading = true;
-    // loadmodel().then((value) {
-    //   print(value);
-    //   print('on the detect page');
-    //   setState(() {});
-    // });
+  
   }
 
   Future<int> predictImage(File imageFile) async {
+    _waiting=true;
     var request = http.MultipartRequest(
         'POST', Uri.parse("http://johnhona1.pythonanywhere.com/pest"));
     request.headers['content-type'] = 'multipart/form-data';
@@ -70,6 +68,7 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
     print("here");
     predictedClass = await predictImage(_image);
     print('Predicted class: $predictedClass');
+    _waiting=false;
     setState(() {});
   }
 
@@ -86,6 +85,7 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
 
     predictedClass = await predictImage(_image);
     print('Predicted class: $predictedClass');
+     _waiting=false;
     setState(() {});
   }
 
@@ -93,7 +93,16 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pest Identification Page'),
+        title: const Text(
+          'Pest Identification Page',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.limeAccent.shade700,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.5),
+          ),
+        ),
       ),
       body: Stack(
         children: [
@@ -142,18 +151,18 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
                     ),
                     SizedBox(height: 20),
                     Container(
-                      height: 120,// Adjust height as needed
+                      height: 120,
                       width: 200,
                       padding: EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20), // Adjust the radius for rounded corners
+                        borderRadius: BorderRadius.circular(20),
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5), // Use the same radius for clipping
+                        borderRadius: BorderRadius.circular(5),
                         child: Image.asset(
                           'assets/images/design.png',
-                           // Set the width of the image
-                          fit: BoxFit.cover, // Adjust the fit of the image to cover the entire width
+                           
+                          fit: BoxFit.cover, 
                         ),
                       ),
                     ),
@@ -226,9 +235,12 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
                             ),
 
                           ),
+                         
                           SizedBox(height: 10),
-                          if (predictedClass != -1 &&
-                              confidence > 0.7)
+                          if(_waiting!=true)
+                          
+                            if (predictedClass != -1 &&
+                              confidence > 0.85)
                             Column(
                               children: [
                                 Text(
@@ -290,7 +302,9 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
                               ),
-                            ),
+                            )
+                          else CircularProgressIndicator()
+                          
                         ],
                       ),
                     )
