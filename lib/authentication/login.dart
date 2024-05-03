@@ -36,25 +36,7 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       // Get the UUID of the logged-in user
-      final String? uuid = userCredential.user?.uid;
 
-      if (uuid != null) {
-        // Get FCM token
-        final String? fcmToken = await _firebaseMessaging.getToken();
-
-        if (fcmToken != null) {
-          // Save FCM token to Firebase Realtime Database under fcmToken node
-          await FirebaseDatabase.instance
-              .reference()
-              .child('fcmToken')
-              .child(uuid)
-              .set(fcmToken);
-
-          print('FCM token saved for user with UUID: $uuid');
-        } else {
-          print('Failed to get FCM token.');
-        }
-      }
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('isLoggedIn', true);
 
@@ -106,20 +88,79 @@ class _LoginPageState extends State<LoginPage> {
                   if (querySnapshot.docs.isEmpty) {
                     _showErrorDialog(context, 'Invalid Greenhouse ID');
                   } else {
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    prefs.setBool('greenHouseAccess', true);
                     User? user = FirebaseAuth.instance.currentUser;
-                    FirebaseFirestore.instance
-                        .collection("users")
-                        .doc(user!.uid)
-                        .set({
-                      'green_id': greenhouseId,
-                    });
-                    _showSuccessDialog(context);
+                    if (user != null) {
+                      final userDocSnapshot = await FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(user.uid)
+                          .get();
+                      if (userDocSnapshot.exists) {
+                        // Check if the email matches
+                        print(user.email);
+                        if (userDocSnapshot.data()?['email'] == user.email) {
+                          // Fetch greenhouse data associated with the user's email
+                          final greenhouseSnapshot = await FirebaseFirestore
+                              .instance
+                              .collection('greenhouse')
+                              .doc(user
+                                  .email) // Assuming email is the document ID
+                              .get();
+                              print(greenhouseSnapshot);
+                          if (greenhouseSnapshot.exists) {
+                            final String? userGreenId =
+                                greenhouseSnapshot.data()?['green_id'];
+                                print(userGreenId);
+                            if (userGreenId != null &&
+                                userGreenId == greenhouseId) {
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
+                              prefs.setBool('greenHouseAccess', true);
+
+                              final String? uuid = user.uid;
+                              if (uuid != null) {
+                                // Get FCM token
+                                final String? fcmToken =
+                                    await _firebaseMessaging.getToken();
+                                if (fcmToken != null) {
+                                  // Save FCM token to Firebase Realtime Database under fcmToken node
+                                  await FirebaseDatabase.instance
+                                      .reference()
+                                      .child('fcmToken')
+                                      .child(uuid)
+                                      .set(fcmToken);
+                                  print(
+                                      'FCM token saved for user with UUID: $uuid');
+                                } else {
+                                  print('Failed to get FCM token.');
+                                }
+                              }
+
+                              _showSuccessDialog(context);
+                            } else {
+                              // Greenhouse ID does not match
+                              _showErrorDialog(
+                                  context, 'Invalid Greenhouse ID');
+                            }
+                          } else {
+                            // Greenhouse document does not exist
+                            _showErrorDialog(
+                                context, 'Greenhouse document not found');
+                          }
+                        } else {
+                          // Email does not match
+                          _showErrorDialog(context, 'Email does not match');
+                        }
+                      } else {
+                        // User document does not exist
+                        _showErrorDialog(context, 'User document not found');
+                      }
+                    } else {
+                      // User is not authenticated
+                      _showErrorDialog(context, 'User not authenticated');
+                    }
                   }
                 } else {
-                  // Greenhouse ID is not provided, show error dialog
+                  // Greenhouse ID is not provided
                   _showErrorDialog(context, 'Please enter Greenhouse ID');
                 }
               },
@@ -347,3 +388,53 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+
+//  ElevatedButton(
+//               onPressed: () async {
+//                 if (greenhouseId != null && greenhouseId!.isNotEmpty) {
+//                   final querySnapshot = await FirebaseFirestore.instance
+//                       .collection('greenhouse')
+//                       .where('green_id', isEqualTo: greenhouseId)
+//                       .get();
+//                   if (querySnapshot.docs.isEmpty) {
+//                     _showErrorDialog(context, 'Invalid Greenhouse ID');
+//                   } else {
+//                     SharedPreferences prefs =
+//                         await SharedPreferences.getInstance();
+//                     prefs.setBool('greenHouseAccess', true);
+//                     User? user = FirebaseAuth.instance.currentUser;
+//                     FirebaseFirestore.instance
+//                         .collection("users")
+//                         .doc(user!.uid)
+//                         .set({
+//                       'green_id': greenhouseId,
+//                     });
+//                     final String? uuid = user.uid;
+
+//                     if (uuid != null) {
+//                       // Get FCM token
+//                       final String? fcmToken =
+//                           await _firebaseMessaging.getToken();
+
+//                       if (fcmToken != null) {
+//                         // Save FCM token to Firebase Realtime Database under fcmToken node
+//                         await FirebaseDatabase.instance
+//                             .reference()
+//                             .child('fcmToken')
+//                             .child(uuid)
+//                             .set(fcmToken);
+
+//                         print('FCM token saved for user with UUID: $uuid');
+//                       } else {
+//                         print('Failed to get FCM token.');
+//                       }
+//                     }
+//                     _showSuccessDialog(context);
+//                   }
+//                 } else {
+//                   // Greenhouse ID is not provided, show error dialog
+//                   _showErrorDialog(context, 'Please enter Greenhouse ID');
+//                 }
+//               },
+//               child: Text('Submit'),
+//             ),
