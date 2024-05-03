@@ -196,8 +196,26 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-  void navigateToPage(BuildContext context, int index) {
+ void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Access Denied'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  Future<void> navigateToPage(BuildContext context, int index) async {
     switch (index) {
       case 0:
         Navigator.push(
@@ -231,13 +249,17 @@ class _HomePageState extends State<HomePage> {
           ),
         );
         break;
-      case 4:
+      case 4:{
+         SharedPreferences prefs = await SharedPreferences.getInstance();
+              bool greenAccess =  prefs.getBool('greenHouseAccess')?? false;
+              greenAccess?
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => IoTControlPage(),
           ),
-        );
+        ): _showErrorDialog(context,"Green House Id Missing");
+        }
         break;
         case 5:
         Navigator.push(

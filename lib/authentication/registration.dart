@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
@@ -26,6 +27,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
         email: email,
         password: password,
       );
+
+       User? user = FirebaseAuth.instance.currentUser;
+          FirebaseFirestore.instance.collection("users").doc(user!.uid).set({
+            'email':user.email,
+          });
 
       Navigator.pushReplacement(
         context,
