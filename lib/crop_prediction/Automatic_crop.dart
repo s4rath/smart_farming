@@ -9,6 +9,7 @@ import 'package:smart_farming/crop_prediction/crop_prediction_model.dart';
 import 'package:location/location.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart' as gc;
+import 'package:smart_farming/services/firebase_fun.dart';
 
 class CropPredictionAuto extends StatefulWidget {
   const CropPredictionAuto({super.key});
@@ -621,9 +622,13 @@ class _CropPredictionAutoState extends State<CropPredictionAuto>
                           ElevatedButton(
                             onPressed: () async {
                               final prediction = await _predictCrop();
-                              cropPrediction = prediction!;
+                              if (prediction!=null){
+                              cropPrediction = prediction;
                               predictedCrop = prediction.predictedCrop;
+                              await functionDBCall("Crop Prediction Automatic Soil", "$predictedCrop");
                               setState(() {});
+
+                              }
                             },
                             style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.symmetric(

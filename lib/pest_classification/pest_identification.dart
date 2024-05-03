@@ -8,6 +8,8 @@ import 'package:http/http.dart' as http;
 import 'package:smart_farming/pest_classification/info.dart';
 import 'package:smart_farming/pest_classification/pestdetail.dart';
 
+import '../services/firebase_fun.dart';
+
 class PestIdentificationPage extends StatefulWidget {
   const PestIdentificationPage({super.key});
 
@@ -28,11 +30,10 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
   void initState() {
     super.initState();
     loading = true;
-  
   }
 
   Future<int> predictImage(File imageFile) async {
-    _waiting=true;
+    _waiting = true;
     var request = http.MultipartRequest(
         'POST', Uri.parse("http://johnhona1.pythonanywhere.com/pest"));
     request.headers['content-type'] = 'multipart/form-data';
@@ -68,7 +69,8 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
     print("here");
     predictedClass = await predictImage(_image);
     print('Predicted class: $predictedClass');
-    _waiting=false;
+     await functionDBCall("Pest Classification",confidence > 0.85? "${details[predictedClass].title}":"Image not detected");
+    _waiting = false;
     setState(() {});
   }
 
@@ -85,7 +87,8 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
 
     predictedClass = await predictImage(_image);
     print('Predicted class: $predictedClass');
-     _waiting=false;
+    await functionDBCall("Pest Classification",confidence > 0.85? "${details[predictedClass].title}":"Image not detected");
+    _waiting = false;
     setState(() {});
   }
 
@@ -117,21 +120,15 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
           Container(
             width: double.infinity,
             height: double.infinity,
-            color: Colors.black.withOpacity(0.4), // Adjust opacity
+            color: Colors.black.withOpacity(0.4),
           ),
           Center(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.8,
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height * 0.7,
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: MediaQuery.of(context).size.height * 0.7,
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(22),
@@ -161,13 +158,11 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
                         borderRadius: BorderRadius.circular(5),
                         child: Image.asset(
                           'assets/images/design.png',
-                           
-                          fit: BoxFit.cover, 
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
                     SizedBox(height: 30),
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -221,93 +216,87 @@ class _PestIdentificationPageState extends State<PestIdentificationPage> {
                     SizedBox(height: 20),
                     loading != true
                         ? Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 110,
-                            width: 180,
-                            padding: EdgeInsets.all(12),
-                            child: Image.file(
-                              _image,
-                              fit: BoxFit.fitWidth,
-                              height: 110,
-                            ),
-
-                          ),
-                         
-                          SizedBox(height: 10),
-                          if(_waiting!=true)
-                          
-                            if (predictedClass != -1 &&
-                              confidence > 0.85)
-                            Column(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: Column(
                               children: [
-                                Text(
-                                  'Classified as : ${details[predictedClass]
-                                      .title} [${confidence.toStringAsFixed(
-                                      4)}]',
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.getFont(
-                                    'Didact Gothic',
-                                    color: Colors.lightGreen.shade100,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
+                                Container(
+                                  height: 110,
+                                  width: 180,
+                                  padding: EdgeInsets.all(12),
+                                  child: Image.file(
+                                    _image,
+                                    fit: BoxFit.fitWidth,
+                                    height: 110,
                                   ),
                                 ),
                                 SizedBox(height: 10),
-                                GestureDetector(
-                                  onTap: () {
-                                    if (predictedClass != -1) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              Info(predictedClass),
+                                if (_waiting != true)
+                                  if (predictedClass != -1 && confidence > 0.85)
+                                    Column(
+                                      children: [
+                                        Text(
+                                          'Classified as : ${details[predictedClass].title} [${confidence.toStringAsFixed(4)}]',
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.getFont(
+                                            'Didact Gothic',
+                                            color: Colors.lightGreen.shade100,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12,
+                                          ),
                                         ),
-                                      );
-                                    }
-                                  },
-                                  child: Container(
-                                    height: 30,
-                                    width: 120,
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(5),
-                                      color: Colors.lightGreen.shade100,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        'Know more',
-                                        style: GoogleFonts.getFont(
-                                          'Didact Gothic',
-                                          color: Colors.green.shade900,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
+                                        SizedBox(height: 10),
+                                        GestureDetector(
+                                          onTap: () {
+                                            if (predictedClass != -1) {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Info(predictedClass),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          child: Container(
+                                            height: 30,
+                                            width: 120,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              color: Colors.lightGreen.shade100,
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                'Know more',
+                                                style: GoogleFonts.getFont(
+                                                  'Didact Gothic',
+                                                  color: Colors.green.shade900,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                         ),
+                                      ],
+                                    )
+                                  else
+                                    Text(
+                                      confidence == 0.0
+                                          ? ""
+                                          : "Image cannot be detected",
+                                      style: GoogleFonts.getFont(
+                                        'Didact Gothic',
+                                        color: Colors.lightGreen.shade100,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
                                       ),
-                                    ),
-                                  ),
-                                ),
+                                    )
+                                else
+                                  CircularProgressIndicator()
                               ],
-                            )
-                          else
-                            Text(
-                              confidence == 0.0
-                                  ? ""
-                                  : "Image cannot be detected",
-                              style: GoogleFonts.getFont(
-                                'Didact Gothic',
-                                color: Colors.lightGreen.shade100,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                              ),
-                            )
-                          else CircularProgressIndicator()
-                          
-                        ],
-                      ),
-                    )
+                            ),
+                          )
                         : Container(),
                   ],
                 ),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:smart_farming/services/firebase_fun.dart';
 import 'package:smart_farming/weed_classification/info.dart';
 import 'package:smart_farming/weed_classification/weeddetail.dart';
 
@@ -67,6 +68,7 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
     print("here");
     predictedClass = await predictImage(_image);
     print('Predicted class: $predictedClass');
+    await functionDBCall("Weed Classification",confidence > 0.85? "${details[predictedClass].title}":"Image not detected");
      _waiting=false;
     setState(() {});
   }
@@ -83,6 +85,7 @@ class _WeedIdentificationPageState extends State<WeedIdentificationPage> {
     print("here");
     predictedClass = await predictImage(_image);
     print('Predicted class: $predictedClass');
+    await functionDBCall("Weed Classification",confidence > 0.85? "${details[predictedClass].title}":"Image not detected");
      _waiting=false;
     setState(() {});
   }

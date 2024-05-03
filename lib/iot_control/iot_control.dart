@@ -67,6 +67,20 @@ class _IoTControlPageState extends State<IoTControlPage>
    LocationData? _location;
   double? latitude;
   double? longitude;
+  DatabaseReference ldrReference =
+        FirebaseDatabase.instance.ref().child("Light").child("Ldr_Value");
+    DatabaseReference soilReference =
+        FirebaseDatabase.instance.ref().child("Soil").child("Soil_Moisture");
+    DatabaseReference TemperatureReference = FirebaseDatabase.instance
+        .ref()
+        .child("Temperature")
+        .child("Celsius_Value");
+    DatabaseReference SmokeReference =
+        FirebaseDatabase.instance.ref().child("Smoke").child("PPM_Value");
+    DatabaseReference HumidityReference = FirebaseDatabase.instance
+        .ref()
+        .child("Humidity")
+        .child("Percentage_Value");
 
   @override
   void initState() {
@@ -82,6 +96,7 @@ class _IoTControlPageState extends State<IoTControlPage>
     bool _isUserFanControlled = false;
     WidgetsBinding.instance.addObserver(this);
     _checkLocationPermission();
+    _startfirebaselisteners();
   }
 
   @override
@@ -96,6 +111,11 @@ void dispose() {
   _timerController2.dispose();
   _timerController3.dispose();
   _timerController4.dispose();
+  ldrReference.onValue.listen(null);
+  soilReference.onValue.listen(null);
+  TemperatureReference.onValue.listen(null);
+  HumidityReference.onValue.listen(null);
+  SmokeReference.onValue.listen(null);
   // Remove observer
   WidgetsBinding.instance.removeObserver(this);
   super.dispose();
@@ -123,7 +143,7 @@ void dispose() {
         final String dewpoint_c = forecastData['dewpoint_c'].toString();
         setState(() {
           dewPoint = dewpoint_c;
-    
+          print(dewPoint);
         });
 
         setState(() {
@@ -238,7 +258,7 @@ void dispose() {
       _isUserControl = true; // Set to true when user manually controls the fan
       _timerDuration1 = timerSeconds1;
     });
-    _countdownTimer1 = Timer.periodic(Duration(seconds: 1), (timer) {
+    _countdownTimer1 = Timer.periodic(Duration(seconds: 1), (timer) async {
       setState(() {
         _timerDuration1--;
       });
@@ -250,6 +270,8 @@ void dispose() {
               false; // Reset to false when user-controlled time is over
         });
         // Get the latest status of the fan
+        print("checking fan status::::::");
+        await _checkClimateValue();
         getFANStatus();
         // Cancel the countdown timer
         _countdownTimer1.cancel();
@@ -273,6 +295,42 @@ void dispose() {
 }
     }
   }
+  void _startfirebaselisteners(){
+    ldrReference.onValue.listen((DatabaseEvent event) {
+      setState(() {
+        ldrValue = event.snapshot.value.toString();
+      });
+      _checkLdrValue();
+      _checkEnvironmentValue();
+    });
+    soilReference.onValue.listen((DatabaseEvent event) {
+      setState(() {
+        soilMoistureValue = event.snapshot.value.toString();
+      });
+      _checkSoilValue();
+    });
+    TemperatureReference.onValue.listen((DatabaseEvent event) {
+      setState(() {
+        temperatureValue = event.snapshot.value.toString();
+      });
+      _checkClimateValue();
+      _checkEnvironmentValue();
+    });
+    HumidityReference.onValue.listen((DatabaseEvent event) {
+      setState(() {
+        HumidityValue = event.snapshot.value.toString();
+      });
+      _checkClimateValue();
+      _checkEnvironmentValue();
+    });
+    SmokeReference.onValue.listen((DatabaseEvent event) {
+      setState(() {
+        smokeValue = event.snapshot.value.toString();
+      });
+      _checkClimateValue();
+      _checkEnvironmentValue();
+    });
+  }
 
   Future<void> _checkClimateValue() async {
     // Check if the user is not currently controlling the fan manually
@@ -284,6 +342,7 @@ void dispose() {
             int.tryParse(smokeValue) != null && int.parse(smokeValue) > 150)) {        // +++++++++++++++++++++fan
       // Trigger the fan to ON state
       await DBref.child('FAN_STATUS').set(1);
+      print("checking climate value...." );
       if (mounted) {
   setState(() {
     fanStatus = 1;
@@ -337,7 +396,7 @@ void dispose() {
       _timerDuration2 = timerSeconds2;
     });
 
-    _countdownTimer2 = Timer.periodic(Duration(seconds: 1), (timer) {
+    _countdownTimer2 = Timer.periodic(Duration(seconds: 1), (timer) async {
       setState(() {
         _timerDuration2--;
       });
@@ -347,6 +406,7 @@ void dispose() {
           _isLdrCheckPaused = false;
         });
         // Cancel the countdown timer
+        await _checkLdrValue();
         getLEDStatus();
         _countdownTimer2.cancel();
       }
@@ -480,7 +540,7 @@ void dispose() {
       _isSoilCheckPaused = true;
       _timerDuration3 = timerSeconds3;
     });
-    _countdownTimer3 = Timer.periodic(Duration(seconds: 1), (timer) {
+    _countdownTimer3 = Timer.periodic(Duration(seconds: 1), (timer) async {
       setState(() {
         _timerDuration3--;
       });
@@ -489,11 +549,14 @@ void dispose() {
         setState(() {
           _isSoilCheckPaused = false;
         });
+        await _checkSoilValue();
+        getPUMPStatus();
         // Cancel the countdown timer
         _countdownTimer3.cancel();
       }
+      
     });
-
+    print("helloooo");
     // Update PumpStatus and PUMP_STATUS together
     if (PumpStatus == 0) {
       DBref.child('PUMP_STATUS').set(1);
@@ -593,7 +656,7 @@ void dispose() {
       _isUserControl1 = true; // Set to true when user manually controls the fan
       _timerDuration4 = timerSeconds4;
     });
-    _countdownTimer4 = Timer.periodic(Duration(seconds: 1), (timer) {
+    _countdownTimer4 = Timer.periodic(Duration(seconds: 1), (timer) async {
       setState(() {
         _timerDuration4--;
       });
@@ -605,6 +668,7 @@ void dispose() {
           _isUserControl1 =
               false; // Reset to false when user-controlled time is over
         });
+        await _checkEnvironmentValue();
         getWINDOWStatus();
         // Cancel the countdown timer
         _countdownTimer4.cancel();
@@ -661,54 +725,8 @@ void dispose() {
 
   @override
   Widget build(BuildContext context) {
-    DatabaseReference ldrReference =
-        FirebaseDatabase.instance.ref().child("Light").child("Ldr_Value");
-    DatabaseReference soilReference =
-        FirebaseDatabase.instance.ref().child("Soil").child("Soil_Moisture");
-    DatabaseReference TemperatureReference = FirebaseDatabase.instance
-        .ref()
-        .child("Temperature")
-        .child("Celsius_Value");
-    DatabaseReference SmokeReference =
-        FirebaseDatabase.instance.ref().child("Smoke").child("PPM_Value");
-    DatabaseReference HumidityReference = FirebaseDatabase.instance
-        .ref()
-        .child("Humidity")
-        .child("Percentage_Value");
-    ldrReference.onValue.listen((DatabaseEvent event) {
-      setState(() {
-        ldrValue = event.snapshot.value.toString();
-      });
-      _checkLdrValue();
-      _checkEnvironmentValue();
-    });
-    soilReference.onValue.listen((DatabaseEvent event) {
-      setState(() {
-        soilMoistureValue = event.snapshot.value.toString();
-      });
-      _checkSoilValue();
-    });
-    TemperatureReference.onValue.listen((DatabaseEvent event) {
-      setState(() {
-        temperatureValue = event.snapshot.value.toString();
-      });
-      _checkClimateValue();
-      _checkEnvironmentValue();
-    });
-    HumidityReference.onValue.listen((DatabaseEvent event) {
-      setState(() {
-        HumidityValue = event.snapshot.value.toString();
-      });
-      _checkClimateValue();
-      _checkEnvironmentValue();
-    });
-    SmokeReference.onValue.listen((DatabaseEvent event) {
-      setState(() {
-        smokeValue = event.snapshot.value.toString();
-      });
-      _checkClimateValue();
-      _checkEnvironmentValue();
-    });
+    
+    
 
     return Scaffold(
       appBar: AppBar(

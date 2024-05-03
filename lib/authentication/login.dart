@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../screens/home.dart';
 
 
@@ -57,6 +58,11 @@ Future<void> _login() async {
         print('Failed to get FCM token.');
       }
     }
+     User? user = FirebaseAuth.instance.currentUser;
+          FirebaseFirestore.instance.collection("users").doc(user!.uid).set({
+            'email':user.email,
+            // 'phone':user.phoneNumber?? 'null'
+          });
 
     // Login successful, navigate to the home page or any other desired page.
     // Replace HomePage with the actual home page class.

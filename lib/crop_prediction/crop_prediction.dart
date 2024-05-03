@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:smart_farming/crop_prediction/crop_prediction_model.dart';
+import 'package:smart_farming/services/firebase_fun.dart';
 
 import 'crop_details.dart';
 
@@ -78,10 +79,6 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
       ),
       body: SingleChildScrollView(
         child: Form(
-
-
-
-
           key: formKey,
           child: Stack(
             alignment: Alignment.topCenter,
@@ -103,7 +100,8 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 60.0), // Add padding to the top
+                padding:
+                    const EdgeInsets.only(top: 60.0), // Add padding to the top
                 child: Container(
                   alignment: Alignment.topCenter,
                   width: MediaQuery.of(context).size.width * 0.8,
@@ -488,10 +486,14 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                       ElevatedButton(
                         onPressed: () async {
                           final prediction = await _predictCrop();
-                          cropPrediction = prediction!;
-                          predictedCrop = prediction.predictedCrop;
-                          top5Crops = prediction.top5Crops;
-                          setState(() {});
+                          if (prediction != null) {
+                            cropPrediction = prediction;
+                            predictedCrop = prediction.predictedCrop;
+                            top5Crops = prediction.top5Crops;
+                            await functionDBCall(
+                                "Crop Prediction Manual", predictedCrop);
+                            setState(() {});
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           padding:
@@ -540,8 +542,10 @@ class _CropPredictionPageState extends State<CropPredictionPage> {
                               height: 15,
                               width: 143,
                               decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.2), // Button background color
-                                borderRadius: BorderRadius.circular(8), // Optional: Button border radius
+                                color: Colors.black.withOpacity(
+                                    0.2), // Button background color
+                                borderRadius: BorderRadius.circular(
+                                    8), // Optional: Button border radius
                               ),
                               child: Center(
                                 child: Text(
