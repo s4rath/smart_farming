@@ -252,11 +252,12 @@ class _HomePageState extends State<HomePage> {
       case 4:{
          SharedPreferences prefs = await SharedPreferences.getInstance();
               bool greenAccess =  prefs.getBool('greenHouseAccess')?? false;
+              String greenId = prefs.getString("greenHouseId")?? '';
               greenAccess?
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => IoTControlPage(),
+            builder: (context) => IoTControlPage(greenId: greenId,),
           ),
         ): _showErrorDialog(context,"Green House Id Missing");
         }

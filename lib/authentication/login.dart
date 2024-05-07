@@ -115,6 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                               SharedPreferences prefs =
                                   await SharedPreferences.getInstance();
                               prefs.setBool('greenHouseAccess', true);
+                              prefs.setString('greenHouseId', userGreenId);
 
                               final String? uuid = user.uid;
                               if (uuid != null) {

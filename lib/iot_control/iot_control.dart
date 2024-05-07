@@ -14,6 +14,9 @@ import 'package:location/location.dart';
 
 
 class IoTControlPage extends StatefulWidget {
+  final String greenId;
+
+  const IoTControlPage({super.key, required this.greenId});
   @override
   _IoTControlPageState createState() => _IoTControlPageState();
 }
@@ -58,7 +61,7 @@ class _IoTControlPageState extends State<IoTControlPage>
   bool isLoading4 = false;
   bool _isUserControl = false;
   bool _isUserControl1 = false;
-  final DBref = FirebaseDatabase.instance.reference();
+  // final DBref = FirebaseDatabase.instance.reference();
   final Future<FirebaseApp> _fApp = Firebase.initializeApp();
   double relativeHumidity = 0.0;
   String dewPoint = '';
@@ -67,20 +70,28 @@ class _IoTControlPageState extends State<IoTControlPage>
    LocationData? _location;
   double? latitude;
   double? longitude;
-  DatabaseReference ldrReference =
-        FirebaseDatabase.instance.ref().child("Light").child("Ldr_Value");
-    DatabaseReference soilReference =
-        FirebaseDatabase.instance.ref().child("Soil").child("Soil_Moisture");
-    DatabaseReference TemperatureReference = FirebaseDatabase.instance
-        .ref()
-        .child("Temperature")
-        .child("Celsius_Value");
-    DatabaseReference SmokeReference =
-        FirebaseDatabase.instance.ref().child("Smoke").child("PPM_Value");
-    DatabaseReference HumidityReference = FirebaseDatabase.instance
-        .ref()
-        .child("Humidity")
-        .child("Percentage_Value");
+  late DatabaseReference smokeValueRef;
+  late DatabaseReference ldrValueRef;
+  late DatabaseReference soilValueRef;
+  late DatabaseReference tempValueRef;
+  late DatabaseReference humidityValueRef;
+  late DatabaseReference DBref;
+
+
+  // DatabaseReference ldrReference =
+  //       FirebaseDatabase.instance.ref().child("Light").child("Ldr_Value");
+    // DatabaseReference soilReference =
+    //     FirebaseDatabase.instance.ref().child("Soil").child("Soil_Moisture");
+    // DatabaseReference TemperatureReference = FirebaseDatabase.instance
+    //     .ref()
+    //     .child("Temperature")
+    //     .child("Celsius_Value");
+    // DatabaseReference SmokeReference =
+    //     FirebaseDatabase.instance.ref().child("Smoke").child("PPM_Value");
+    // DatabaseReference HumidityReference = FirebaseDatabase.instance
+    //     .ref()
+    //     .child("Humidity")
+    //     .child("Percentage_Value");
 
   @override
   void initState() {
@@ -93,6 +104,13 @@ class _IoTControlPageState extends State<IoTControlPage>
     getLEDStatus();
     getWINDOWStatus();
     tz.initializeTimeZones();
+     smokeValueRef = FirebaseDatabase.instance.reference().child(widget.greenId).child("Smoke").child("PPM_Value");
+     ldrValueRef = FirebaseDatabase.instance.reference().child(widget.greenId).child("Light").child("Ldr_Value");
+     soilValueRef = FirebaseDatabase.instance.reference().child(widget.greenId).child("Soil").child("Soil_Moisture");
+     tempValueRef = FirebaseDatabase.instance.reference().child(widget.greenId).child("Temperature").child("Celsius_Value");
+     humidityValueRef = FirebaseDatabase.instance.reference().child(widget.greenId).child("Humidity").child("Percentage_Value");
+
+    DBref = FirebaseDatabase.instance.reference().child(widget.greenId);
     bool _isUserFanControlled = false;
     WidgetsBinding.instance.addObserver(this);
     _checkLocationPermission();
@@ -111,11 +129,13 @@ void dispose() {
   _timerController2.dispose();
   _timerController3.dispose();
   _timerController4.dispose();
-  ldrReference.onValue.listen(null);
-  soilReference.onValue.listen(null);
-  TemperatureReference.onValue.listen(null);
-  HumidityReference.onValue.listen(null);
-  SmokeReference.onValue.listen(null);
+
+  ldrValueRef.onValue.listen(null);
+  soilValueRef.onValue.listen(null);
+  tempValueRef.onValue.listen(null);
+  humidityValueRef.onValue.listen(null);
+  smokeValueRef.onValue.listen(null);
+
   // Remove observer
   WidgetsBinding.instance.removeObserver(this);
   super.dispose();
@@ -296,34 +316,34 @@ void dispose() {
     }
   }
   void _startfirebaselisteners(){
-    ldrReference.onValue.listen((DatabaseEvent event) {
+    ldrValueRef.onValue.listen((DatabaseEvent event) {
       setState(() {
         ldrValue = event.snapshot.value.toString();
       });
       _checkLdrValue();
       _checkEnvironmentValue();
     });
-    soilReference.onValue.listen((DatabaseEvent event) {
+    soilValueRef.onValue.listen((DatabaseEvent event) {
       setState(() {
         soilMoistureValue = event.snapshot.value.toString();
       });
       _checkSoilValue();
     });
-    TemperatureReference.onValue.listen((DatabaseEvent event) {
+    tempValueRef.onValue.listen((DatabaseEvent event) {
       setState(() {
         temperatureValue = event.snapshot.value.toString();
       });
       _checkClimateValue();
       _checkEnvironmentValue();
     });
-    HumidityReference.onValue.listen((DatabaseEvent event) {
+    humidityValueRef.onValue.listen((DatabaseEvent event) {
       setState(() {
         HumidityValue = event.snapshot.value.toString();
       });
       _checkClimateValue();
       _checkEnvironmentValue();
     });
-    SmokeReference.onValue.listen((DatabaseEvent event) {
+    smokeValueRef.onValue.listen((DatabaseEvent event) {
       setState(() {
         smokeValue = event.snapshot.value.toString();
       });
