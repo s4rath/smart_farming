@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
     'Pest Identification',
     'Cost Estimation',
     'Greenhouse Control',
-    'News Letter'
+    'News Updates'
   ];
   @override
   Widget build(BuildContext context) {

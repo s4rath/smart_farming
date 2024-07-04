@@ -90,7 +90,7 @@ class WelcomePage extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(height: 20), // Add vertical spacing
+                SizedBox(height: 20), 
                 Text(
                   "From Seed to Success with a Single Tap\n"
                   "You don't need to adhere us Formally\n"
@@ -120,13 +120,13 @@ class WelcomePage extends StatelessWidget {
                         alignment: Alignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/logonew.png', // Replace with your logo image path
-                            width: 100, // Adjust the width as needed
-                            height: 80, // Adjust the height as needed
+                            'assets/images/logonew.png', 
+                            width: 100, 
+                            height: 80, 
                           ),
                           Container(
-                            width: 150, // Adjust the width as needed
-                            height: 150, // Adjust the height as needed
+                            width: 150,
+                            height: 150, 
                             decoration: BoxDecoration(
                               color: Colors.blueGrey.withOpacity(0.3),
                               borderRadius: BorderRadius.circular(110),
@@ -134,7 +134,7 @@ class WelcomePage extends StatelessWidget {
                           ),
                           Positioned(
                             bottom:
-                                110, // Add small vertical spacing between the image and the text
+                                110, 
                             child: Text(
                               'Tap to Dive!',
                               style: GoogleFonts.cinzel(

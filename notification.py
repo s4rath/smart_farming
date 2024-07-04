@@ -82,68 +82,69 @@ def send_notification(device_token, title, body):
 
 
 
-def check_condition_and_send_notification(data):
+def check_condition_and_send_notification(data, unique_id):
 
     global light_notification_sent
     global soil_moisture_notification_sent
     global climate_notification_sent
     global dtobj_india
 
-    if 'fcmToken' in data:
+    if unique_id in data:
+        device_data = data[unique_id]
 
-        if (data.get('Light', {}).get('Ldr_Value') is not None
-                and float(data['Light']['Ldr_Value']) < 300.0
-                and (10 < dtobj_india.hour < 15)
-                and not light_notification_sent):
-            print("light can send")
-            light_notification_sent = True
-            for user_uuid in data.get('fcmToken', {}).keys():
+        if 'fcmToken' in data:
+            if (device_data.get('Light', {}).get('Ldr_Value') is not None
+                    and float(device_data['Light']['Ldr_Value']) < 600.0
+                    and (10 < dtobj_india.hour < 15)
+                    and not light_notification_sent):
+                print("light can send")
+                light_notification_sent = True
+                for user_uuid in data.get('fcmToken', {}).keys():
+                    device_token = data['fcmToken'].get(user_uuid)
+                    send_notification(
+                        device_token,
+                        title="Grow Light is on",
+                        body="Sunlight Intensity  is less than 600 nm")
+            elif (int(device_data['Light']['Ldr_Value']) > 600):
+                print("in")
+                light_notification_sent = False
 
-                device_token = data['fcmToken'].get(user_uuid)
-                send_notification(
-                    device_token,
-                    title="Grow Light is on",
-                    body="Sunlight Intensity  is less than 300 nm")
-        elif (int(data['Light']['Ldr_Value']) > 300):
-            print("in")
-            light_notification_sent = False
+            if (device_data.get('Soil', {}).get('Soil_Moisture') is not None
+                    and int(device_data['Soil']['Soil_Moisture']) > 600
+                    and not soil_moisture_notification_sent):
+                print("soil moisture can send")
+                soil_moisture_notification_sent = True
+                for user_uuid in data.get('fcmToken', {}).keys():
+                    device_token = data['fcmToken'].get(user_uuid)
+                    send_notification(device_token,
+                                      title="Water pump is on",
+                                      body="soil moisture falls below 60%")
+            elif (int(device_data['Soil']['Soil_Moisture']) < 600):
+                print("soil calling")
+                soil_moisture_notification_sent = False
 
-        if (data.get('Soil', {}).get('Soil_Moisture') is not None
-                and int(data['Soil']['Soil_Moisture']) > 600
-                and not soil_moisture_notification_sent):
-            print("soil moisture can send")
-            soil_moisture_notification_sent = True
-            for user_uuid in data.get('fcmToken', {}).keys():
-                device_token = data['fcmToken'].get(user_uuid)
-                send_notification(device_token,
-                                  title="Water pump is on",
-                                  body="soil moisture is greater than 600")
-        elif (int(data['Soil']['Soil_Moisture']) < 600):
-            print("soil calling")
-            soil_moisture_notification_sent = False
-
-        if (((data.get('Temperature', {}).get('Celsius_Value') is not None
-              and float(data['Temperature']['Celsius_Value']) > 35.0) or
-             (data.get('Humidity', {}).get('Percentage_Value') is not None
-              and float(data['Humidity']['Percentage_Value']) > 60.0) or
-             (data.get('Smoke', {}).get('PPM_Value') is not None
-              and int(data['Smoke']['PPM_Value']) > 150))
-                and not climate_notification_sent):
-            print("climate can send")
-            climate_notification_sent = True
-            for user_uuid in data.get('fcmToken', {}).keys():
-                device_token = data['fcmToken'].get(user_uuid)
-                send_notification(
-                    device_token,
-                    title="Fan is on and Window is open ",
-                    body=
-                    "Either smoke greater than 150 or  temperature falls above  35 or  humidity greater than 60"
-                )
-        elif ((float(data['Temperature']['Celsius_Value']) < 35.0)
-              and (float(data['Humidity']['Percentage_Value']) < 60.0)
-              and (int(data['Smoke']['PPM_Value']) < 150)):
-            print("climate calling")
-            climate_notification_sent = False
+            if (((device_data.get('Temperature', {}).get('Celsius_Value') is not None
+                  and float(device_data['Temperature']['Celsius_Value']) > 35.0) or
+                #  (device_data.get('Humidity', {}).get('Percentage_Value') is not None
+                #   and float(device_data['Humidity']['Percentage_Value']) > 60.0) or
+                 (device_data.get('Smoke', {}).get('PPM_Value') is not None
+                  and int(device_data['Smoke']['PPM_Value']) > 150))
+                    and not climate_notification_sent):
+                print("climate can send")
+                climate_notification_sent = True
+                for user_uuid in data.get('fcmToken', {}).keys():
+                    device_token = data['fcmToken'].get(user_uuid)
+                    send_notification(
+                        device_token,
+                        title="Fan is on and Window is open ",
+                        body=
+                        "Either smoke greater than 150 or  temperature falls above  35"
+                    )
+            elif ((float(device_data['Temperature']['Celsius_Value']) < 35.0)
+                #   and (float(device_data['Humidity']['Percentage_Value']) < 60.0)
+                  and (int(device_data['Smoke']['PPM_Value']) < 150)):
+                print("climate calling")
+                climate_notification_sent = False
 
 
 @app.route('/')
@@ -173,8 +174,8 @@ def keep_alive():
             data = database_response.json()
             print(data)
           
-
-            check_condition_and_send_notification(data)
+            unique_id = '9q0rcpcvl'  
+            check_condition_and_send_notification(data, unique_id)
         else:
             print(
                 f"Failed to fetch data from Firebase Realtime Database: {database_response.text}"

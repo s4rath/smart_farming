@@ -527,14 +527,7 @@ class _CostEstimationPageState extends State<CostEstimationPage> {
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
-                          Positioned.fill(
-                            child: Container(
-                              color: Colors.black
-                                  .withOpacity(0.8), // Adjust opacity as needed
-                              child:
-                                  Center(), // Optionally add child widgets here
-                            ),
-                          ),
+                        
                           Visibility(
                             visible: isCostEstimated &&
                                 !isFetching, // Show the container only if isCostEstimated is true and isFetching is false
@@ -583,7 +576,7 @@ class _CostEstimationPageState extends State<CostEstimationPage> {
                     ),
                   ),
                 ),
-              ),
+              ),  
             ],
           ),
         ),

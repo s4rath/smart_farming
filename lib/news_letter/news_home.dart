@@ -14,7 +14,7 @@ class _NewsHomePageState extends State<NewsHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("News Letter", style: TextStyle(color: Colors.white)),
+        title: const Text("News Updates", style: TextStyle(color: Colors.white)),
         backgroundColor: Color.fromARGB(255,213,159,100),
         flexibleSpace: Container(
           decoration: BoxDecoration(

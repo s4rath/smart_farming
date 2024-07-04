@@ -484,7 +484,7 @@ void dispose() {
     // Check if the current time is between 10 AM and 4 PM
     if (!_isLdrCheckPaused &&
         currentHour >= 10 &&
-        currentHour < 16 &&
+        currentHour < 17 &&
         int.tryParse(ldrValue) != null &&
         int.parse(ldrValue) < 600) {
       await DBref.child('LED_STATUS').set(1);
