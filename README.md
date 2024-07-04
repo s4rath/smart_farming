@@ -112,5 +112,5 @@ Here are some screenshots of the application
 - **Prof. Rejin R**
 
 ## License
-This project is licensed under the Apache License.
+This project is licensed under the Creative Commons Legal Code.
 
