@@ -81,12 +81,12 @@ void loop() {
    if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 1000 || sendDataPrevMillis == 0)){
     //since we want the data to be updated every second
     sendDataPrevMillis = millis();
-    // Enter Temperature in to the DHT_11 Table
+   
   
    
    
    
-      if (Firebase.RTDB.setInt(&fbdo, "9q0rcpcvl/Light/Ldr_Value",LdrValue)){
+      if (Firebase.RTDB.setInt(&fbdo, "firebase_path/Light/Ldr_Value",LdrValue)){//your firebase path
       // This command will be executed even if you dont serial print but we will make sure its working
       Serial.println("Ldr sensor value");
   Serial.println(LdrValue);
@@ -96,7 +96,7 @@ void loop() {
       Serial.println("REASON: " + fbdo.errorReason());
     }
 
-      if (Firebase.RTDB.getInt(&fbdo,"9q0rcpcvl/FAN_STATUS")){ // Your Firebase data path
+      if (Firebase.RTDB.getInt(&fbdo,"firebase_path/FAN_STATUS")){ // Your Firebase data path
  int   FAN_STATUS = fbdo.intData();
     if(FAN_STATUS== 0){
       digitalWrite(relayPin, HIGH);  ;
@@ -111,7 +111,6 @@ void loop() {
       Serial.println(fbdo.errorReason());
     }
     
-    // Enter Humidity in to the DHT_11 Table
     
   }
 
